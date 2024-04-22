@@ -1,0 +1,12 @@
+{
+  "Language": "Cpp",
+  "BasedOnStyle": "Microsoft",
+  "IndentWidth": 4,
+  "AccessModifierOffset": -4,
+  "NamespaceIndentation": "All",
+  "ColumnLimit": 120,
+  "BraceWrapping": {
+    "AfterControlStatement": false,
+    "AfterFunction": true,
+  }
+}
