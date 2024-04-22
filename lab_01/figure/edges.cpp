@@ -2,12 +2,10 @@
 #include "tools.h"
 #include <stdlib.h>
 
-
 edges_t edges_default(void)
 {
     return edges_t{0, 0};
 }
-
 
 err_t fload_edges(FILE *f, edge_t *edges, const size_t nedges)
 {
@@ -26,8 +24,6 @@ err_t fload_edges(FILE *f, edge_t *edges, const size_t nedges)
 
     return rc;
 }
-
-
 
 err_t fload_nedges(FILE *f, size_t &n)
 {
@@ -100,7 +96,6 @@ err_t fload_edges_segment(FILE *f, edges_t &edges)
     return rc;
 }
 
-
 err_t fsave_nedges(FILE *f, size_t nedges)
 {
     if (f == NULL)
@@ -112,8 +107,6 @@ err_t fsave_nedges(FILE *f, size_t nedges)
 
     return rc;
 }
-
-
 
 err_t fsave_edges(FILE *f, const edge_t *edges, size_t nedges)
 {

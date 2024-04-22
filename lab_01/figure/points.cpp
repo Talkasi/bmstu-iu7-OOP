@@ -3,12 +3,10 @@
 #include "tools.h"
 #include <stdlib.h>
 
-
 points_3D_t points_default(void)
 {
     return points_3D_t{0, 0};
 }
-
 
 err_t alloc_points(point_3D_t *&points, const size_t npoints)
 {
@@ -34,7 +32,6 @@ err_t free_points(points_3D_t &points)
     return SUCCESS;
 }
 
-
 err_t free_points_data(point_3D_t *&points, size_t &npoints)
 {
     free(points);
@@ -42,7 +39,6 @@ err_t free_points_data(point_3D_t *&points, size_t &npoints)
     npoints = 0;
     return SUCCESS;
 }
-
 
 err_t fload_points(FILE *f, point_3D_t *points, const size_t npoints)
 {
@@ -62,7 +58,6 @@ err_t fload_points(FILE *f, point_3D_t *points, const size_t npoints)
     return rc;
 }
 
-
 err_t fload_npoints(FILE *f, size_t &n)
 {
     if (f == NULL)
@@ -74,7 +69,6 @@ err_t fload_npoints(FILE *f, size_t &n)
 
     return rc;
 }
-
 
 err_t fload_points_segment(FILE *f, points_3D_t &points)
 {
@@ -104,7 +98,6 @@ err_t fload_points_segment(FILE *f, points_3D_t &points)
     return rc;
 }
 
-
 err_t fsave_npoints(FILE *f, const size_t npoints)
 {
     if (f == NULL)
@@ -116,7 +109,6 @@ err_t fsave_npoints(FILE *f, const size_t npoints)
 
     return rc;
 }
-
 
 err_t fsave_points(FILE *f, const point_3D_t *points, const size_t npoints)
 {
@@ -136,7 +128,6 @@ err_t fsave_points(FILE *f, const point_3D_t *points, const size_t npoints)
     return rc;
 }
 
-
 err_t fsave_points_segment(FILE *f, const points_3D_t &points)
 {
     if (f == NULL)
@@ -155,7 +146,6 @@ err_t fsave_points_segment(FILE *f, const points_3D_t &points)
     return rc;
 }
 
-
 err_t move_points(points_3D_t &points, const move_t move)
 {
     err_t rc = SUCCESS;
@@ -164,7 +154,6 @@ err_t move_points(points_3D_t &points, const move_t move)
     return rc;
 }
 
-
 err_t scale_points(points_3D_t &points, point_3D_t scale_center, const scale_t &scale)
 {
     err_t rc = SUCCESS;
@@ -172,7 +161,6 @@ err_t scale_points(points_3D_t &points, point_3D_t scale_center, const scale_t &
         rc = scale_point(points.data[i], scale_center, scale);
     return rc;
 }
-
 
 err_t rotate_points(points_3D_t &points, point_3D_t rotate_center, const rotate_t &rotate)
 {

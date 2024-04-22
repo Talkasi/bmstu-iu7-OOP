@@ -22,7 +22,6 @@ struct scale
     double kz;
 };
 
-
 typedef struct move move_t;
 typedef struct rotate rotate_t;
 typedef struct scale scale_t;

@@ -1,12 +1,10 @@
 #include "point.h"
 #include <math.h>
 
-
 point_3D_t point_default(void)
 {
     return point_3D_t{0, 0, 0};
 }
-
 
 err_t fload_point(FILE *f, point_3D_t &point)
 {
@@ -53,15 +51,11 @@ err_t rotate_point(point_3D_t &point, const point_3D_t &rotate_center, const rot
     double pitch = rotate.pitch * M_PI / 180;
     double roll = rotate.roll * M_PI / 180;
 
-    point.x = x * (cos(yaw) * cos(pitch)) +
-              y * (cos(yaw) * sin(pitch) * sin(roll) - sin(yaw) * cos(roll)) +
+    point.x = x * (cos(yaw) * cos(pitch)) + y * (cos(yaw) * sin(pitch) * sin(roll) - sin(yaw) * cos(roll)) +
               z * (cos(yaw) * sin(pitch) * cos(roll) + sin(yaw) * sin(roll));
-    point.y = x * (sin(yaw) * cos(pitch)) +
-              y * (sin(yaw) * sin(pitch) * sin(roll) + cos(yaw) * cos(roll)) +
+    point.y = x * (sin(yaw) * cos(pitch)) + y * (sin(yaw) * sin(pitch) * sin(roll) + cos(yaw) * cos(roll)) +
               z * (sin(yaw) * sin(pitch) * cos(roll) - cos(yaw) * sin(roll));
-    point.z = x * (-sin(pitch)) +
-              y * (cos(pitch) * sin(roll)) +
-              z * (cos(pitch) * cos(roll));
+    point.z = x * (-sin(pitch)) + y * (cos(pitch) * sin(roll)) + z * (cos(pitch) * cos(roll));
 
     point.x += rotate_center.x;
     point.y += rotate_center.y;

@@ -1,9 +1,9 @@
 #ifndef POINTS_H
 #define POINTS_H
-#include <stdio.h>
-#include "point.h"
-#include "errors.h"
 #include "actions.h"
+#include "errors.h"
+#include "point.h"
+#include <stdio.h>
 
 typedef struct points_3D points_3D_t;
 
@@ -12,7 +12,6 @@ struct points_3D
     point_3D_t *data;
     size_t n;
 };
-
 
 points_3D_t points_default(void);
 
@@ -31,6 +30,5 @@ err_t fsave_points_segment(FILE *f, const points_3D_t &points);
 err_t move_points(points_3D_t &points, const move_t move);
 err_t scale_points(points_3D_t &points, point_3D_t scale_center, const scale_t &scale);
 err_t rotate_points(points_3D_t &points, point_3D_t rotate_center, const rotate_t &rotate);
-
 
 #endif // POINTS_H

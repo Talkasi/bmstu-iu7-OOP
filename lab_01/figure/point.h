@@ -1,8 +1,8 @@
 #ifndef POINT_H
 #define POINT_H
-#include <stdio.h>
 #include "actions.h"
 #include "errors.h"
+#include <stdio.h>
 
 typedef struct point_3D point_3D_t;
 

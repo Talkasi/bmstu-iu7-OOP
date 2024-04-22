@@ -1,5 +1,6 @@
-#include <QMessageBox>
 #include "errors.h"
+
+#include <QMessageBox>
 
 void error_message(err_t error)
 {
@@ -50,7 +51,8 @@ void error_message(err_t error)
         messageBox.critical(0, "Произошла ошибка!", "В программе произошел вызов неверной команды.");
         break;
     default:
-        messageBox.critical(0, "Произошла ошибка!", "Что-то пошло не так. Попробуйте позже."); /* Why is it even here? */
+        messageBox.critical(0, "Произошла ошибка!",
+                            "Что-то пошло не так. Попробуйте позже."); /* Why is it even here? */
         break;
     }
 }

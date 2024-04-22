@@ -1,25 +1,29 @@
 #ifndef DRAW_H
 #define DRAW_H
-#include <QGraphicsScene>
 #include "errors.h"
 #include "figure.h"
+#include <QGraphicsScene>
 
-typedef struct {
+typedef struct
+{
     double x;
     double y;
 } point_2D_t;
 
-typedef struct {
-  point_2D_t first;
-  point_2D_t second;
+typedef struct
+{
+    point_2D_t first;
+    point_2D_t second;
 } line_2D_t;
 
-typedef struct {
-  point_3D_t first;
-  point_3D_t second;
+typedef struct
+{
+    point_3D_t first;
+    point_3D_t second;
 } line_3D_t;
 
-struct scene {
+struct scene
+{
     QGraphicsScene *scene;
     double width;
     double height;

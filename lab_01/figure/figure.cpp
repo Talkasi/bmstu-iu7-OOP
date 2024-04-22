@@ -1,6 +1,6 @@
-#include <stdio.h>
 #include "figure.h"
 #include "tools.h"
+#include <stdio.h>
 
 err_t free_figure(figure_t &figure)
 {
@@ -9,7 +9,6 @@ err_t free_figure(figure_t &figure)
     free_edges(figure.edges);
     return rc;
 }
-
 
 err_t get_max_figure_point(point_3D_t &max_point, const point_3D_t *points, const size_t npoints)
 {
@@ -96,7 +95,6 @@ err_t compute_figure_center(point_3D_t &figure_center, points_3D_t &points)
     return rc;
 }
 
-
 figure_t &init_figure()
 {
     static figure_t figure;
@@ -182,14 +180,12 @@ err_t fsave_figure(figure_t &figure, const char *file_name)
     return rc;
 }
 
-
 err_t move_figure(figure_t &figure, const move_t &move)
 {
     err_t rc = SUCCESS;
     rc = move_points(figure.points, move);
     return rc;
 }
-
 
 err_t scale_figure(figure_t &figure, const scale_t &scale)
 {
@@ -200,7 +196,6 @@ err_t scale_figure(figure_t &figure, const scale_t &scale)
     return rc;
 }
 
-
 err_t rotate_figure(figure_t &figure, const rotate_t &rotate)
 {
     err_t rc = SUCCESS;
@@ -209,4 +204,3 @@ err_t rotate_figure(figure_t &figure, const rotate_t &rotate)
         rc = rotate_points(figure.points, figure.center, rotate);
     return rc;
 }
-

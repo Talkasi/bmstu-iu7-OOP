@@ -1,13 +1,12 @@
+#include "mainwindow.h"
+#include "errors.h"
+#include "requests.h"
+#include "ui_mainwindow.h"
 #include <QFileDialog>
 #include <QMessageBox>
 #include <iostream>
 
-#include "errors.h"
-#include "requests.h"
-#include "mainwindow.h"
-#include "ui_mainwindow.h"
-
-MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWindow)
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
@@ -52,15 +51,12 @@ err_t MainWindow::draw()
 
     request_t request;
     request.action = DRAW;
-    request.scene = {
-        .scene  = ui->graphicsView->scene(),
-        .width  = ui->graphicsView->scene()->width(),
-        .height = ui->graphicsView->scene()->height()
-    };
+    request.scene = {.scene = ui->graphicsView->scene(),
+                     .width = ui->graphicsView->scene()->width(),
+                     .height = ui->graphicsView->scene()->height()};
 
     return requests_handler(request);
 }
-
 
 void MainWindow::on_LoadFile_clicked()
 {
@@ -78,7 +74,6 @@ void MainWindow::on_LoadFile_clicked()
         error_message(rc);
 }
 
-
 void MainWindow::on_SaveFile_clicked()
 {
     QString filename = QFileDialog::getSaveFileName();
@@ -95,16 +90,11 @@ void MainWindow::on_SaveFile_clicked()
         error_message(rc);
 }
 
-
 void MainWindow::on_buttonMove_clicked()
 {
     request_t request;
     request.action = MOVE;
-    request.move = {
-        .dx = ui->InputXMoving->value(),
-        .dy = ui->InputYMoving->value(),
-        .dz = ui->InputZMoving->value()
-    };
+    request.move = {.dx = ui->InputXMoving->value(), .dy = ui->InputYMoving->value(), .dz = ui->InputZMoving->value()};
 
     err_t rc = requests_handler(request);
     if (rc == SUCCESS)
@@ -113,17 +103,13 @@ void MainWindow::on_buttonMove_clicked()
     if (rc != SUCCESS)
         error_message(rc);
 }
-
 
 void MainWindow::on_buttonTurn_clicked()
 {
     request_t request;
     request.action = ROTATE;
     request.rotate = {
-        .yaw = ui->InputYawTurn->value(),
-        .pitch = ui->InputPitchTurn->value(),
-        .roll = ui->InputRollTurn->value()
-    };
+        .yaw = ui->InputYawTurn->value(), .pitch = ui->InputPitchTurn->value(), .roll = ui->InputRollTurn->value()};
 
     err_t rc = requests_handler(request);
     if (rc == SUCCESS)
@@ -133,16 +119,11 @@ void MainWindow::on_buttonTurn_clicked()
         error_message(rc);
 }
 
-
 void MainWindow::on_buttonScale_clicked()
 {
     request_t request;
     request.action = SCALE;
-    request.scale = {
-        .kx = ui->InputXScale->value(),
-        .ky = ui->InputYScale->value(),
-        .kz = ui->InputZScale->value()
-    };
+    request.scale = {.kx = ui->InputXScale->value(), .ky = ui->InputYScale->value(), .kz = ui->InputZScale->value()};
 
     err_t rc = requests_handler(request);
     if (rc == SUCCESS)

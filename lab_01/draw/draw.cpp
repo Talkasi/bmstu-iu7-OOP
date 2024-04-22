@@ -1,6 +1,6 @@
 #include "draw.h"
-#include <QLine>
 
+#include <QLine>
 
 line_2D_t line_2D_default(void)
 {
@@ -12,13 +12,11 @@ line_3D_t line_3D_default(void)
     return line_3D_t{0, 0};
 }
 
-err_t draw_line2D(const point_2D_t &first_point, 
-                  const point_2D_t &second_point, const scene_t &scene)
+err_t draw_line2D(const point_2D_t &first_point, const point_2D_t &second_point, const scene_t &scene)
 {
     err_t rc = SUCCESS;
     QPen Pen = QPen(Qt::black, 2);
-    scene.scene->addLine(QLineF(first_point.x, first_point.y,
-                                second_point.x, second_point.y), Pen);
+    scene.scene->addLine(QLineF(first_point.x, first_point.y, second_point.x, second_point.y), Pen);
     return rc;
 }
 

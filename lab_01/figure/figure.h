@@ -1,11 +1,11 @@
 #ifndef FIGURE_H
 #define FIGURE_H
 
-#include <stdio.h>
 #include "actions.h"
+#include "edges.h"
 #include "errors.h"
 #include "points.h"
-#include "edges.h"
+#include <stdio.h>
 
 struct figure
 {

@@ -1,8 +1,8 @@
 #ifndef REQUESTS_H
 #define REQUESTS_H
 #include "actions.h"
-#include "errors.h"
 #include "draw.h"
+#include "errors.h"
 
 typedef enum
 {
@@ -18,8 +18,7 @@ typedef enum
 typedef struct
 {
     action_t action;
-    union
-    {
+    union {
         const char *filename;
         move_t move;
         rotate_t rotate;
@@ -27,7 +26,6 @@ typedef struct
         scene_t scene;
     };
 } request_t;
-
 
 err_t requests_handler(request_t &request);
 
