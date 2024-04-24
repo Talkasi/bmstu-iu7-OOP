@@ -71,7 +71,6 @@ public:
 
     /* OTHER METHODS */
     /* Bool info */
-    bool isEmpty() const;
     bool isIdentity() const;
     bool isDiagonal() const;
     bool isZero() const;
