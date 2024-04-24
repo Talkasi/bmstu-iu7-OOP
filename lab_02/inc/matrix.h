@@ -4,6 +4,9 @@
 template <typename T> class Matrix : public BaseMatrix
 {
 public:
+    friend Iterator<T>;
+    friend ConstIterator<T>;
+
     // TODO(Talkasi): Understand where to put noexcept and do it.
 
     /* LIFETIME */
@@ -50,7 +53,6 @@ public:
     Matrix<T> &operator-=(const Matrix<T> &matrix) const;
 
     /* Multiplication */
-    // TODO(Talkasi): Think about vector multiplication?
     Matrix<T> operator*(const T &val) const;
     Matrix<T> operator*(const Matrix<T> &matrix) const;
     Matrix<T> &operator*=(const T &val) const;
@@ -67,7 +69,13 @@ public:
     const T &operator()(const size_t i, const size_t j) const;
 
     /* ITERATORS */
-    // TODO(Talkasi)
+    Iterator<T> begin() noexcept;
+    Iterator<T> end() noexcept;
+
+    ConstIterator<T> begin() const noexcept;
+    ConstIterator<T> end() const noexcept;
+    ConstIterator<T> cbegin() const noexcept;
+    ConstIterator<T> cend() const noexcept;
 
     /* OTHER METHODS */
     /* Bool info */
