@@ -1,18 +1,23 @@
 #ifndef CONST_ITERATOR_H
 #define CONST_ITERATOR_H
+#include "base_iterator.h"
+#include "matrix.h"
+#include <memory>
+
+template <typename T> class Matrix;
 
 template <typename T> class ConstIterator : public BaseIterator
 {
 public:
     ConstIterator() = default;
-    ConstIterator(Matrix<T> &matrix, const size_t i = 0);
+    ConstIterator(const Matrix<T> &matrix, const size_t i = 0);
     ConstIterator(const ConstIterator<T> &iter) = default;
     ConstIterator(ConstIterator<T> &&iter) noexcept = default;
 
     ~ConstIterator() noexcept = default;
 
     const T &operator[](const size_t index) const;
-    const T *operator->() const;
+    const std::shared_ptr<T> *operator->() const;
     const T &operator*() const;
 
     operator bool() const noexcept;
@@ -35,10 +40,14 @@ public:
     ConstIterator<T> &operator=(ConstIterator<T> &&other) noexcept;
 
 protected:
-    // TODO(Talkasi)
+    const std::shared_ptr<T> *get_ptr() const;
+    void expride_check(const int line) const;
+    void index_check(const int line) const;
 
 private:
-    std::weak_ptr<T[]> data;
+    std::weak_ptr<T[]> ptr;
+    size_t n_rows = 0;
+    size_t n_cols = 0;
 };
 
 #endif // CONST_ITERATOR_H

@@ -1,22 +1,29 @@
 #ifndef ITERATOR_H
 #define ITERATOR_H
+#include "matrix.h"
+#include <memory>
+
+template <typename T> class Matrix;
 
 template <typename T> class Iterator : public BaseIterator
 {
 public:
     Iterator() = default;
-    Iterator(Matrix<T> &matrix, const size_t i = 0);
+    explicit Iterator(Matrix<T> &matrix) noexcept;
     Iterator(const Iterator<T> &iter) = default;
     Iterator(Iterator<T> &&iter) noexcept = default;
 
-    ~Iterator() noexcept = default;
+    ~Iterator() noexcept;
 
     T &operator[](const size_t index);
-    T *operator->();
+    std::shared_ptr<T> *operator->();
     T &operator*();
 
-    operator bool() const noexcept;
-    auto operator<=>(const Iterator<T> &other) const;
+    operator bool() const;
+    auto operator<=>(const T &other) const
+    {
+        return this->index <=> other.index;
+    }
 
     Iterator<T> &operator++();
     Iterator<T> operator++(int);
@@ -24,21 +31,22 @@ public:
     Iterator<T> &operator--();
     Iterator<T> operator--(int);
 
-    template <typename U> Iterator<T> operator+(const U val) const;
-    template <typename U> Iterator<T> operator-(const U val) const;
-    template <typename U> Iterator<T> &operator+=(const U val);
-    template <typename U> Iterator<T> &operator-=(const U val);
-
-    std::ptrdiff_t operator-(const Iterator<T> &iter);
-
-    Iterator<T> &operator=(const Iterator<T> &other);
-    Iterator<T> &operator=(Iterator<T> &&other) noexcept;
+    Iterator<T> operator+(const size_t val) const;
+    Iterator<T> operator-(const size_t val) const;
+    Iterator<T> &operator+=(const size_t val);
+    Iterator<T> &operator-=(const size_t val);
 
 protected:
-    // TODO(Talkasi)
+    std::shared_ptr<T> *get_ptr() const;
+    void expride_check(const int line) const;
+    void index_check(const int line) const;
 
 private:
-    std::weak_ptr<T[]> data;
+    std::weak_ptr<T[]> ptr;
+    size_t n_rows = 0;
+    size_t n_cols = 0;
 };
+
+#include "iterator.inl"
 
 #endif // ITERATOR_H

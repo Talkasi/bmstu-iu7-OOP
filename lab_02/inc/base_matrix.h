@@ -12,13 +12,13 @@ public:
     size_t getNRows() const noexcept;
 
     bool isEmpty() const noexcept;
+    bool isSquare() const noexcept;
 
-    // TODO(Talkasi): Check this line.
     virtual ~BaseMatrix() = 0;
 
 protected:
-    size_t nRows = 0;
-    size_t nCols = 0;
+    size_t n_rows = 0;
+    size_t n_cols = 0;
 };
 
 #endif // BASE_MATRIX_H

@@ -7,11 +7,10 @@ class BaseIterator
 public:
     BaseIterator();
     explicit BaseIterator(const BaseIterator &iter);
-    virtual ~BaseIterator() = 0;
+    virtual ~BaseIterator() = default;
 
 protected:
-    size_t index;
-    size_t size;
+    size_t index = 0;
 };
 
 #endif // BASE_ITERATOR_H
