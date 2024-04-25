@@ -1,7 +1,8 @@
+#include "concept.h"
 #include "matrix.h"
 #include <iostream>
 
-template <typename T> Matrix<T> Matrix<T>::operator/(const T &val) const
+template <NumType T> Matrix<T> Matrix<T>::operator/(const T &val) const
 {
     division_by_zero_check(val, __LINE__);
 
@@ -13,7 +14,7 @@ template <typename T> Matrix<T> Matrix<T>::operator/(const T &val) const
     return res;
 }
 
-template <typename T> Matrix<T> &Matrix<T>::operator/=(const T &val) const
+template <NumType T> Matrix<T> &Matrix<T>::operator/=(const T &val) const
 {
     division_by_zero_check(val, __LINE__);
 

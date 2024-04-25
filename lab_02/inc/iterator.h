@@ -1,11 +1,12 @@
 #ifndef ITERATOR_H
 #define ITERATOR_H
+#include "concept.h"
 #include "matrix.h"
 #include <memory>
 
-template <typename T> class Matrix;
+template <NumType T> class Matrix;
 
-template <typename T> class Iterator : public BaseIterator
+template <NumType T> class Iterator : public BaseIterator
 {
 public:
     Iterator() = default;

@@ -1,12 +1,13 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 #include "base_matrix.h"
+#include "concept.h"
 #include "const_iterator.h"
 #include "iterator.h"
 #include <initializer_list>
 #include <memory>
 
-template <typename T> class Matrix : public BaseMatrix
+template <NumType T> class Matrix : public BaseMatrix
 {
 public:
     friend Iterator<T>;
@@ -31,7 +32,7 @@ public:
     bool isSizeEqual(const Matrix<T> &matrix) const;
     bool isSizeNotEqual(const Matrix<T> &matrix) const;
 
-    template <typename U> auto operator<=>(const Matrix<U> &other) const;
+    template <NumType U> auto operator<=>(const Matrix<U> &other) const;
 
     /* Assignment */
     Matrix<T> &operator=(const Matrix<T> &matrix);

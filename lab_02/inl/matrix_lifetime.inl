@@ -1,16 +1,17 @@
+#include "concept.h"
 #include "matrix.h"
 #include <iostream>
 
-template <typename T> Matrix<T>::Matrix() noexcept : BaseMatrix()
+template <NumType T> Matrix<T>::Matrix() noexcept : BaseMatrix()
 {
 }
 
-template <typename T> Matrix<T>::Matrix(const size_t n_rows, const size_t n_cols) : BaseMatrix(n_rows, n_cols)
+template <NumType T> Matrix<T>::Matrix(const size_t n_rows, const size_t n_cols) : BaseMatrix(n_rows, n_cols)
 {
     allocate(n_rows * n_cols);
 }
 
-template <typename T>
+template <NumType T>
 Matrix<T>::Matrix(const size_t n_rows, const size_t n_cols, const T &fill_elem) : BaseMatrix(n_rows, n_cols)
 {
     allocate(n_rows * n_cols);
@@ -19,7 +20,7 @@ Matrix<T>::Matrix(const size_t n_rows, const size_t n_cols, const T &fill_elem) 
         data[i] = fill_elem;
 }
 
-template <typename T>
+template <NumType T>
 Matrix<T>::Matrix(const size_t n_rows, const size_t n_cols, const T **matrix) : BaseMatrix(n_rows, n_cols)
 {
     allocate(n_rows * n_cols);
@@ -29,7 +30,7 @@ Matrix<T>::Matrix(const size_t n_rows, const size_t n_cols, const T **matrix) : 
             data[i * n_cols + j] = matrix[i][j];
 }
 
-template <typename T>
+template <NumType T>
 Matrix<T>::Matrix(const std::initializer_list<std::initializer_list<T>> elems)
     : BaseMatrix(elems.size(), elems.begin()->size())
 {
@@ -45,7 +46,7 @@ Matrix<T>::Matrix(const std::initializer_list<std::initializer_list<T>> elems)
     }
 }
 
-template <typename T> Matrix<T>::Matrix(const Matrix<T> &matrix) : BaseMatrix(matrix.n_rows, matrix.n_cols)
+template <NumType T> Matrix<T>::Matrix(const Matrix<T> &matrix) : BaseMatrix(matrix.n_rows, matrix.n_cols)
 {
     allocate(matrix.n_rows * matrix.n_cols);
 
@@ -53,7 +54,7 @@ template <typename T> Matrix<T>::Matrix(const Matrix<T> &matrix) : BaseMatrix(ma
         data[i] = matrix.data[i];
 }
 
-template <typename T>
+template <NumType T>
 Matrix<T>::Matrix(Matrix<T> &&tmp_matrix) noexcept : BaseMatrix(tmp_matrix.n_rows, tmp_matrix.n_cols)
 {
     data = tmp_matrix.data;

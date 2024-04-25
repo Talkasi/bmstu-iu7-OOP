@@ -1,7 +1,8 @@
+#include "concept.h"
 #include "matrix.h"
 #include <iostream>
 
-template <typename T> bool Matrix<T>::isIdentity() const
+template <NumType T> bool Matrix<T>::isIdentity() const
 {
     if (n_rows != n_cols)
         return false;
@@ -22,7 +23,7 @@ template <typename T> bool Matrix<T>::isIdentity() const
     return true;
 }
 
-template <typename T> bool Matrix<T>::isZero() const
+template <NumType T> bool Matrix<T>::isZero() const
 {
     for (size_t i = 0; i < n_rows; ++i)
         for (size_t j = 0; j < n_cols; ++j)
@@ -32,7 +33,7 @@ template <typename T> bool Matrix<T>::isZero() const
     return true;
 }
 
-template <typename T> Matrix<T> Matrix<T>::zeroMatrix(const size_t n_rows, const size_t n_cols)
+template <NumType T> Matrix<T> Matrix<T>::zeroMatrix(const size_t n_rows, const size_t n_cols)
 {
     Matrix<T> res(n_rows, n_cols);
 
@@ -43,7 +44,7 @@ template <typename T> Matrix<T> Matrix<T>::zeroMatrix(const size_t n_rows, const
     return res;
 }
 
-template <typename T> Matrix<T> Matrix<T>::identityMatrix(const size_t n_rows, const size_t n_cols)
+template <NumType T> Matrix<T> Matrix<T>::identityMatrix(const size_t n_rows, const size_t n_cols)
 {
     Matrix<T> res(n_rows, n_cols);
 
@@ -54,7 +55,7 @@ template <typename T> Matrix<T> Matrix<T>::identityMatrix(const size_t n_rows, c
     return res;
 }
 
-template <typename T> Matrix<T> &Matrix<T>::transpose() const
+template <NumType T> Matrix<T> &Matrix<T>::transpose() const
 {
     Matrix<T> transposed_matrix(n_cols, n_rows);
 
@@ -65,7 +66,7 @@ template <typename T> Matrix<T> &Matrix<T>::transpose() const
     return transposed_matrix;
 }
 
-template <typename T>
+template <NumType T>
 void Matrix<T>::exclude_copy(Matrix<T> &dst, const Matrix<T> &src, const size_t ex_row, const size_t ex_col)
 {
     size_t row_index, col_index;
@@ -78,7 +79,7 @@ void Matrix<T>::exclude_copy(Matrix<T> &dst, const Matrix<T> &src, const size_t 
         }
 }
 
-template <typename T> T Matrix<T>::det() const
+template <NumType T> T Matrix<T>::det() const
 {
     square_sizes_check(__LINE__);
 
@@ -104,7 +105,7 @@ template <typename T> T Matrix<T>::det() const
     return res;
 }
 
-template <typename T> Matrix<T> Matrix<T>::invert() const
+template <NumType T> Matrix<T> Matrix<T>::invert() const
 {
     square_sizes_check(__LINE__);
     det_check(__LINE__);
@@ -128,7 +129,7 @@ template <typename T> Matrix<T> Matrix<T>::invert() const
     return res;
 }
 
-template <typename T> void Matrix<T>::swap_rows(const size_t i, const size_t j)
+template <NumType T> void Matrix<T>::swap_rows(const size_t i, const size_t j)
 {
     row_index_check(i, __LINE__);
     row_index_check(j, __LINE__);
@@ -138,7 +139,7 @@ template <typename T> void Matrix<T>::swap_rows(const size_t i, const size_t j)
             std::swap(at(i, col_i), at(j, col_i));
 }
 
-template <typename T> void Matrix<T>::swap_cols(const size_t i, const size_t j)
+template <NumType T> void Matrix<T>::swap_cols(const size_t i, const size_t j)
 {
     row_index_check(i, __LINE__);
     row_index_check(j, __LINE__);

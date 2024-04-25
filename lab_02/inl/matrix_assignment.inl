@@ -1,7 +1,8 @@
+#include "concept.h"
 #include "matrix.h"
 #include <iostream>
 
-template <typename T> Matrix<T> &Matrix<T>::operator=(const Matrix<T> &matrix)
+template <NumType T> Matrix<T> &Matrix<T>::operator=(const Matrix<T> &matrix)
 {
     n_rows = matrix.n_rows;
     n_cols = matrix.n_cols;
@@ -13,7 +14,7 @@ template <typename T> Matrix<T> &Matrix<T>::operator=(const Matrix<T> &matrix)
     return *this;
 }
 
-template <typename T> Matrix<T> &Matrix<T>::operator=(Matrix<T> &&tmp_matrix) noexcept
+template <NumType T> Matrix<T> &Matrix<T>::operator=(Matrix<T> &&tmp_matrix) noexcept
 {
     n_rows = tmp_matrix.n_rows;
     n_cols = tmp_matrix.n_cols;
@@ -22,7 +23,7 @@ template <typename T> Matrix<T> &Matrix<T>::operator=(Matrix<T> &&tmp_matrix) no
     return *this;
 }
 
-template <typename T> Matrix<T> &Matrix<T>::operator=(std::initializer_list<std::initializer_list<T>> &elems)
+template <NumType T> Matrix<T> &Matrix<T>::operator=(std::initializer_list<std::initializer_list<T>> &elems)
 {
     this->n_rows = elems.size();
     this->n_cols = elems.begin()->size();

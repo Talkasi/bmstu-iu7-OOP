@@ -1,12 +1,13 @@
+#include "concept.h"
 #include "matrix.h"
 #include <iostream>
 
-template <typename T> template <typename U> auto Matrix<T>::operator<=>(const Matrix<U> &other) const
+template <NumType T> template <NumType U> auto Matrix<T>::operator<=>(const Matrix<U> &other) const
 {
     return n_rows * n_cols <=> other.n_rows * other.n_cols;
 }
 
-template <typename T> bool Matrix<T>::operator==(const Matrix<T> &matrix) const
+template <NumType T> bool Matrix<T>::operator==(const Matrix<T> &matrix) const
 {
     if (n_rows != matrix.n_rows || n_cols != matrix.n_cols)
         return false;
@@ -18,7 +19,7 @@ template <typename T> bool Matrix<T>::operator==(const Matrix<T> &matrix) const
     return true;
 }
 
-template <typename T> bool Matrix<T>::operator!=(const Matrix<T> &matrix) const
+template <NumType T> bool Matrix<T>::operator!=(const Matrix<T> &matrix) const
 {
     if (n_rows != matrix.n_rows || n_cols != matrix.n_cols)
         return true;
@@ -30,7 +31,7 @@ template <typename T> bool Matrix<T>::operator!=(const Matrix<T> &matrix) const
     return false;
 }
 
-template <typename T> bool Matrix<T>::isSizeEqual(const Matrix<T> &matrix) const
+template <NumType T> bool Matrix<T>::isSizeEqual(const Matrix<T> &matrix) const
 {
     if (n_rows != matrix.n_rows || n_cols != matrix.n_cols)
         return false;
@@ -38,7 +39,7 @@ template <typename T> bool Matrix<T>::isSizeEqual(const Matrix<T> &matrix) const
     return true;
 }
 
-template <typename T> bool Matrix<T>::isSizeNotEqual(const Matrix<T> &matrix) const
+template <NumType T> bool Matrix<T>::isSizeNotEqual(const Matrix<T> &matrix) const
 {
     if (n_rows != matrix.n_rows || n_cols != matrix.n_cols)
         return true;

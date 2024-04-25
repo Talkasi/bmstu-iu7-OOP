@@ -1,3 +1,4 @@
+#include "concept.h"
 #include "iterator_exceptions.h"
 #include "matrix.h"
 #include "matrix_exceptions.h"
@@ -5,7 +6,7 @@
 
 #define EPS 1e-8
 
-template <typename T> void Matrix<T>::allocate(const size_t size)
+template <NumType T> void Matrix<T>::allocate(const size_t size)
 {
     time_t cur_time = time(NULL);
     int line;
@@ -19,7 +20,7 @@ template <typename T> void Matrix<T>::allocate(const size_t size)
     }
 }
 
-template <typename T> void Matrix<T>::row_index_check(const size_t i, const int line) const
+template <NumType T> void Matrix<T>::row_index_check(const size_t i, const int line) const
 {
     if (i >= getNRows()) {
         time_t cur_time = time(NULL);
@@ -27,7 +28,7 @@ template <typename T> void Matrix<T>::row_index_check(const size_t i, const int 
     }
 }
 
-template <typename T> void Matrix<T>::col_index_check(const size_t j, const int line) const
+template <NumType T> void Matrix<T>::col_index_check(const size_t j, const int line) const
 {
     if (j >= getNCols()) {
         time_t cur_time = time(NULL);
@@ -35,7 +36,7 @@ template <typename T> void Matrix<T>::col_index_check(const size_t j, const int 
     }
 }
 
-template <typename T> void Matrix<T>::square_sizes_check(const int line) const
+template <NumType T> void Matrix<T>::square_sizes_check(const int line) const
 {
     if (getNRows() != getNCols()) {
         time_t cur_time = time(NULL);
@@ -43,7 +44,7 @@ template <typename T> void Matrix<T>::square_sizes_check(const int line) const
     }
 }
 
-template <typename T> void Matrix<T>::det_check(const int line) const
+template <NumType T> void Matrix<T>::det_check(const int line) const
 {
     T det = this->det();
 
@@ -53,7 +54,7 @@ template <typename T> void Matrix<T>::det_check(const int line) const
     }
 }
 
-template <typename T> void Matrix<T>::sum_sizes_check(const Matrix<T> &mtr, const int line) const
+template <NumType T> void Matrix<T>::sum_sizes_check(const Matrix<T> &mtr, const int line) const
 {
     if (getNRows() != mtr.getNRows() || getNCols() != mtr.getNCols()) {
         time_t cur_time = time(NULL);
@@ -61,7 +62,7 @@ template <typename T> void Matrix<T>::sum_sizes_check(const Matrix<T> &mtr, cons
     }
 }
 
-template <typename T> void Matrix<T>::mul_sizes_check(const Matrix<T> &mtr, const int line) const
+template <NumType T> void Matrix<T>::mul_sizes_check(const Matrix<T> &mtr, const int line) const
 {
     if (getNCols() != mtr.getNRows()) {
         time_t cur_time = time(NULL);
@@ -69,7 +70,7 @@ template <typename T> void Matrix<T>::mul_sizes_check(const Matrix<T> &mtr, cons
     }
 }
 
-template <typename T> void Matrix<T>::division_by_zero_check(const T &num, const int line) const
+template <NumType T> void Matrix<T>::division_by_zero_check(const T &num, const int line) const
 {
     if (abs(num) < EPS) {
         time_t cur_time = time(NULL);

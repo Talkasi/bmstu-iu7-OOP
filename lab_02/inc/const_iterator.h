@@ -1,12 +1,13 @@
 #ifndef CONST_ITERATOR_H
 #define CONST_ITERATOR_H
 #include "base_iterator.h"
+#include "concept.h"
 #include "matrix.h"
 #include <memory>
 
-template <typename T> class Matrix;
+template <NumType T> class Matrix;
 
-template <typename T> class ConstIterator : public BaseIterator
+template <NumType T> class ConstIterator : public BaseIterator
 {
 public:
     ConstIterator() = default;
@@ -29,10 +30,10 @@ public:
     ConstIterator<T> &operator--();
     ConstIterator<T> operator--(int);
 
-    template <typename U> ConstIterator<T> operator+(const U val) const;
-    template <typename U> ConstIterator<T> operator-(const U val) const;
-    template <typename U> ConstIterator<T> &operator+=(const U val);
-    template <typename U> ConstIterator<T> &operator-=(const U val);
+    template <NumType U> ConstIterator<T> operator+(const U val) const;
+    template <NumType U> ConstIterator<T> operator-(const U val) const;
+    template <NumType U> ConstIterator<T> &operator+=(const U val);
+    template <NumType U> ConstIterator<T> &operator-=(const U val);
 
     std::ptrdiff_t operator-(const ConstIterator<T> &iter);
 
