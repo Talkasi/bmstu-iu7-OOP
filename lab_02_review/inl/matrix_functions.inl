@@ -33,7 +33,7 @@ template <NumType T> bool Matrix<T>::isZero() const
     return true;
 }
 
-template <NumType T> Matrix<T> Matrix<T>::zeroMatrix(const size_t n_rows, const size_t n_cols)
+template <NumType T> Matrix<T> Matrix<T>::zeroMatrix(size_t n_rows, size_t n_cols)
 {
     Matrix<T> res(n_rows, n_cols);
 
@@ -44,7 +44,7 @@ template <NumType T> Matrix<T> Matrix<T>::zeroMatrix(const size_t n_rows, const 
     return res;
 }
 
-template <NumType T> Matrix<T> Matrix<T>::identityMatrix(const size_t n_rows, const size_t n_cols)
+template <NumType T> Matrix<T> Matrix<T>::identityMatrix(size_t n_rows, size_t n_cols)
 {
     Matrix<T> res(n_rows, n_cols);
 
@@ -55,7 +55,7 @@ template <NumType T> Matrix<T> Matrix<T>::identityMatrix(const size_t n_rows, co
     return res;
 }
 
-template <NumType T> Matrix<T> &Matrix<T>::transpose() const
+template <NumType T> Matrix<T> Matrix<T>::transpose() const
 {
     Matrix<T> transposed_matrix(n_cols, n_rows);
 
@@ -67,7 +67,7 @@ template <NumType T> Matrix<T> &Matrix<T>::transpose() const
 }
 
 template <NumType T>
-void Matrix<T>::exclude_copy(Matrix<T> &dst, const Matrix<T> &src, const size_t ex_row, const size_t ex_col)
+void Matrix<T>::exclude_copy(Matrix<T> &dst, const Matrix<T> &src, size_t ex_row, size_t ex_col)
 {
     size_t row_index, col_index;
 
@@ -129,7 +129,7 @@ template <NumType T> Matrix<T> Matrix<T>::invert() const
     return res;
 }
 
-template <NumType T> void Matrix<T>::swap_rows(const size_t i, const size_t j)
+template <NumType T> void Matrix<T>::swap_rows(size_t i, size_t j)
 {
     row_index_check(i, __LINE__);
     row_index_check(j, __LINE__);
@@ -139,7 +139,7 @@ template <NumType T> void Matrix<T>::swap_rows(const size_t i, const size_t j)
             std::swap(at(i, col_i), at(j, col_i));
 }
 
-template <NumType T> void Matrix<T>::swap_cols(const size_t i, const size_t j)
+template <NumType T> void Matrix<T>::swap_cols(size_t i, size_t j)
 {
     row_index_check(i, __LINE__);
     row_index_check(j, __LINE__);

@@ -24,7 +24,7 @@ template <NumType T> Matrix<T> Matrix<T>::operator+(const Matrix<T> &matrix) con
     return res;
 }
 
-template <NumType T> Matrix<T> &Matrix<T>::operator+=(const T &val) const
+template <NumType T> Matrix<T> &Matrix<T>::operator+=(const T &val)
 {
     for (size_t i = 0; i < n_rows * n_cols; ++i)
         data[i] += val;
@@ -32,7 +32,7 @@ template <NumType T> Matrix<T> &Matrix<T>::operator+=(const T &val) const
     return *this;
 }
 
-template <NumType T> Matrix<T> &Matrix<T>::operator+=(const Matrix<T> &matrix) const
+template <NumType T> Matrix<T> &Matrix<T>::operator+=(const Matrix<T> &matrix)
 {
     sum_sizes_check(matrix, __LINE__);
 

@@ -6,7 +6,7 @@ class BaseMatrix
 {
 public:
     BaseMatrix() noexcept;
-    BaseMatrix(const size_t n_rows, const size_t n_cols) noexcept;
+    BaseMatrix(size_t n_rows, size_t n_cols) noexcept;
 
     size_t getNCols() const noexcept;
     size_t getNRows() const noexcept;

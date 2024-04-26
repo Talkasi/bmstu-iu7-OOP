@@ -14,7 +14,7 @@ template <NumType T> Iterator<T>::Iterator(Matrix<T> &matrix) noexcept
 
 template <NumType T> Iterator<T>::~Iterator() noexcept = default;
 
-template <NumType T> T &Iterator<T>::operator[](const size_t index)
+template <NumType T> T &Iterator<T>::operator[](size_t index)
 {
     expride_check(__LINE__);
     index_check(__LINE__, index);
@@ -22,7 +22,7 @@ template <NumType T> T &Iterator<T>::operator[](const size_t index)
     return *(get_ptr() + index);
 }
 
-template <NumType T> std::shared_ptr<T> *Iterator<T>::operator->()
+template <NumType T> std::shared_ptr<T> Iterator<T>::operator->()
 {
     expride_check(__LINE__);
     index_check(__LINE__);
@@ -83,7 +83,7 @@ template <NumType T> Iterator<T> Iterator<T>::operator--(int)
     return tmp;
 }
 
-template <NumType T> Iterator<T> Iterator<T>::operator+(const size_t val) const
+template <NumType T> Iterator<T> Iterator<T>::operator+(size_t val) const
 {
     expride_check(__LINE__);
     index_check(__LINE__);
@@ -93,7 +93,7 @@ template <NumType T> Iterator<T> Iterator<T>::operator+(const size_t val) const
     return tmp;
 }
 
-template <NumType T> Iterator<T> Iterator<T>::operator-(const size_t val) const
+template <NumType T> Iterator<T> Iterator<T>::operator-(size_t val) const
 {
     expride_check(__LINE__);
     index_check(__LINE__);
@@ -103,7 +103,7 @@ template <NumType T> Iterator<T> Iterator<T>::operator-(const size_t val) const
     return tmp;
 }
 
-template <NumType T> Iterator<T> &Iterator<T>::operator+=(const size_t val)
+template <NumType T> Iterator<T> &Iterator<T>::operator+=(size_t val)
 {
     expride_check(__LINE__);
     index_check(__LINE__);
@@ -112,7 +112,7 @@ template <NumType T> Iterator<T> &Iterator<T>::operator+=(const size_t val)
     return *this;
 }
 
-template <NumType T> Iterator<T> &Iterator<T>::operator-=(const size_t val)
+template <NumType T> Iterator<T> &Iterator<T>::operator-=(size_t val)
 {
     expride_check(__LINE__);
     index_check(__LINE__);
@@ -121,13 +121,13 @@ template <NumType T> Iterator<T> &Iterator<T>::operator-=(const size_t val)
     return *this;
 }
 
-template <NumType T> std::shared_ptr<T> *Iterator<T>::get_ptr() const
+template <NumType T> std::shared_ptr<T> Iterator<T>::get_ptr() const
 {
     std::shared_ptr<T[]> tmp = ptr.lock();
     return tmp.get() + index;
 }
 
-template <NumType T> void Iterator<T>::expride_check(const int line) const
+template <NumType T> void Iterator<T>::expride_check(int line) const
 {
     if (ptr.expired()) {
         time_t curTime = time(NULL);
@@ -135,7 +135,7 @@ template <NumType T> void Iterator<T>::expride_check(const int line) const
     }
 }
 
-template <NumType T> void Iterator<T>::index_check(const int line) const
+template <NumType T> void Iterator<T>::index_check(int line) const
 {
     if (index >= n_rows * n_cols) {
         time_t curTime = time(NULL);

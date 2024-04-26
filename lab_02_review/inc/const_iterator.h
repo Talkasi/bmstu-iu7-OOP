@@ -11,14 +11,14 @@ template <NumType T> class ConstIterator : public BaseIterator
 {
 public:
     ConstIterator() = default;
-    ConstIterator(const Matrix<T> &matrix, const size_t i = 0);
+    ConstIterator(const Matrix<T> &matrix, size_t i = 0);
     ConstIterator(const ConstIterator<T> &iter) = default;
     ConstIterator(ConstIterator<T> &&iter) noexcept = default;
 
     ~ConstIterator() noexcept = default;
 
-    const T &operator[](const size_t index) const;
-    const std::shared_ptr<T> *operator->() const;
+    const T &operator[](size_t index) const;
+    const std::shared_ptr<T> operator->() const;
     const T &operator*() const;
 
     operator bool() const noexcept;
@@ -41,9 +41,9 @@ public:
     ConstIterator<T> &operator=(ConstIterator<T> &&other) noexcept;
 
 protected:
-    const std::shared_ptr<T> *get_ptr() const;
-    void expride_check(const int line) const;
-    void index_check(const int line) const;
+    const std::shared_ptr<T> get_ptr() const;
+    void expride_check(int line) const;
+    void index_check(int line) const;
 
 private:
     std::weak_ptr<T[]> ptr;
