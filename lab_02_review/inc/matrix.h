@@ -93,8 +93,6 @@ public:
     void swap_rows(size_t f_row, size_t s_row);
     void swap_cols(size_t f_col, size_t s_col);
 
-    std::shared_ptr<T[]> getData();
-
 protected:
     void allocate(size_t size);
 

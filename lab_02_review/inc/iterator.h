@@ -11,6 +11,7 @@ template <NumType T> class Iterator : public BaseIterator
 public:
     Iterator() = default;
     explicit Iterator(Matrix<T> &matrix) noexcept;
+    Iterator(std::shared_ptr<T[]> const &dataPtr, size_t nRows, size_t nCols) noexcept;
     Iterator(const Iterator<T> &iter) = default;
     Iterator(Iterator<T> &&iter) noexcept = default;
 
@@ -21,7 +22,7 @@ public:
     T &operator*();
 
     operator bool() const;
-    auto operator<=>(const T &other) const
+    auto operator<=>(const Iterator<T> &other) const
     {
         return this->index <=> other.index;
     }

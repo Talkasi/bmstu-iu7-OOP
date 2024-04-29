@@ -150,8 +150,3 @@ template <NumType T> void Matrix<T>::swap_cols(size_t i, size_t j)
         for (size_t row_i = 0; row_i < n_rows; ++row_i)
             std::swap(at(row_i, i), at(row_i, j));
 }
-
-template <NumType T> std::shared_ptr<T[]> Matrix<T>::getData()
-{
-    return data;
-}
