@@ -10,7 +10,7 @@ template <NumType T> class Iterator : public BaseIterator
 {
 public:
     Iterator() = default;
-    explicit Iterator(shared_ptr<Matrix<T>> &matrix) noexcept;
+    explicit Iterator(Matrix<T> &matrix) noexcept;
     Iterator(const Iterator<T> &iter) = default;
     Iterator(Iterator<T> &&iter) noexcept = default;
 
@@ -43,7 +43,7 @@ protected:
     void index_check(int line) const;
 
 private:
-    std::weak_ptr<Matrix<T>> ptr;
+    std::weak_ptr<T[]> data;
     size_t n_rows = 0;
     size_t n_cols = 0;
 };

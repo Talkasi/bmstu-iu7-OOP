@@ -14,7 +14,7 @@ public:
     bool isEmpty() const noexcept;
     bool isSquare() const noexcept;
 
-    virtual ~BaseMatrix() = 0;
+    ~BaseMatrix() = default;
 
 protected:
     size_t n_rows = 0;

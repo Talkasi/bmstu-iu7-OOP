@@ -6,9 +6,9 @@
 
 template <NumType T> Iterator<T>::Iterator(Matrix<T> &matrix) noexcept
 {
-    ptr = matrix.data;
-    n_rows = matrix.n_rows;
-    n_cols = matrix.n_cols;
+    n_rows = matrix.getNRows();
+    n_cols = matrix.getNCols();
+    data = matrix.getData();
     index = 0;
 }
 
@@ -19,7 +19,7 @@ template <NumType T> T &Iterator<T>::operator[](size_t index)
     expride_check(__LINE__);
     index_check(__LINE__, index);
 
-    return *(get_ptr() + index);
+    return get_ptr()[index];
 }
 
 template <NumType T> std::shared_ptr<T> Iterator<T>::operator->()
@@ -123,13 +123,13 @@ template <NumType T> Iterator<T> &Iterator<T>::operator-=(size_t val)
 
 template <NumType T> std::shared_ptr<T> Iterator<T>::get_ptr() const
 {
-    std::shared_ptr<T[]> tmp = ptr.lock();
-    return tmp.get() + index;
+    std::shared_ptr<T[]> tmp = data.lock();
+    return std::make_shared<T>(tmp.get()[index]);
 }
 
 template <NumType T> void Iterator<T>::expride_check(int line) const
 {
-    if (ptr.expired()) {
+    if (data.expired()) {
         time_t curTime = time(NULL);
         throw ExpiredException(ctime(&curTime), __FILE__, line, typeid(*this).name(), __FUNCTION__);
     }
