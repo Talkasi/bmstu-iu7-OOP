@@ -66,7 +66,7 @@ template <NumType T> Matrix<T> &Matrix<T>::operator*=(const Matrix<T> &matrix)
 
 template <NumType T> template <NumType U> auto Matrix<T>::operator*(const U &val) const
 {
-    Matrix<decltype((*this)(0, 0) - val)> res(*this);
+    Matrix<decltype((*this)(0, 0) * val)> res(*this);
 
     for (size_t i = 0; i < n_rows * n_cols; ++i)
         res.data[i] *= val;
@@ -77,7 +77,7 @@ template <NumType T> template <NumType U> auto Matrix<T>::operator*(const U &val
 template <NumType T> template <NumType U> auto Matrix<T>::operator*(const Matrix<U> &matrix) const
 {
     mul_sizes_check(matrix, __LINE__);
-    Matrix<decltype((*this)(0, 0) - matrix(0, 0))> res(n_rows, matrix.getNCols());
+    Matrix<decltype((*this)(0, 0) * matrix(0, 0))> res(n_rows, matrix.getNCols());
     decltype((*this)(0) * matrix(0)) sum;
 
     for (size_t i = 0; i < n_rows; ++i) {
