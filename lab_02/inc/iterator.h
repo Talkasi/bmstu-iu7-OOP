@@ -11,17 +11,18 @@ template <NumType T> class Iterator : public BaseIterator
 public:
     Iterator() = default;
     explicit Iterator(Matrix<T> &matrix) noexcept;
+    Iterator(std::shared_ptr<T[]> const &dataPtr, size_t nRows, size_t nCols) noexcept;
     Iterator(const Iterator<T> &iter) = default;
     Iterator(Iterator<T> &&iter) noexcept = default;
 
     ~Iterator() noexcept;
 
-    T &operator[](const size_t index);
-    std::shared_ptr<T> *operator->();
+    T &operator[](size_t index);
+    std::shared_ptr<T> operator->();
     T &operator*();
 
     operator bool() const;
-    auto operator<=>(const T &other) const
+    auto operator<=>(const Iterator<T> &other) const
     {
         return this->index <=> other.index;
     }
@@ -32,18 +33,18 @@ public:
     Iterator<T> &operator--();
     Iterator<T> operator--(int);
 
-    Iterator<T> operator+(const size_t val) const;
-    Iterator<T> operator-(const size_t val) const;
-    Iterator<T> &operator+=(const size_t val);
-    Iterator<T> &operator-=(const size_t val);
+    Iterator<T> operator+(size_t val) const;
+    Iterator<T> operator-(size_t val) const;
+    Iterator<T> &operator+=(size_t val);
+    Iterator<T> &operator-=(size_t val);
 
 protected:
-    std::shared_ptr<T> *get_ptr() const;
-    void expride_check(const int line) const;
-    void index_check(const int line) const;
+    std::shared_ptr<T> get_ptr() const;
+    void expride_check(int line) const;
+    void index_check(int line) const;
 
 private:
-    std::weak_ptr<T[]> ptr;
+    std::weak_ptr<T[]> data;
     size_t n_rows = 0;
     size_t n_cols = 0;
 };

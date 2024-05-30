@@ -11,18 +11,22 @@ template <NumType T> class ConstIterator : public BaseIterator
 {
 public:
     ConstIterator() = default;
-    ConstIterator(const Matrix<T> &matrix, const size_t i = 0);
+    explicit ConstIterator(Matrix<T> &matrix) noexcept;
+    ConstIterator(std::shared_ptr<T[]> const &dataPtr, size_t nRows, size_t nCols) noexcept;
     ConstIterator(const ConstIterator<T> &iter) = default;
     ConstIterator(ConstIterator<T> &&iter) noexcept = default;
 
     ~ConstIterator() noexcept = default;
 
-    const T &operator[](const size_t index) const;
-    const std::shared_ptr<T> *operator->() const;
+    const T &operator[](size_t index) const;
+    const std::shared_ptr<T> operator->() const;
     const T &operator*() const;
 
     operator bool() const noexcept;
-    auto operator<=>(const ConstIterator<T> &other) const;
+    auto operator<=>(const ConstIterator<T> &other) const
+    {
+        return this->index <=> other.index;
+    }
 
     ConstIterator<T> &operator++();
     ConstIterator<T> operator++(int);
@@ -30,10 +34,10 @@ public:
     ConstIterator<T> &operator--();
     ConstIterator<T> operator--(int);
 
-    template <NumType U> ConstIterator<T> operator+(const U val) const;
-    template <NumType U> ConstIterator<T> operator-(const U val) const;
-    template <NumType U> ConstIterator<T> &operator+=(const U val);
-    template <NumType U> ConstIterator<T> &operator-=(const U val);
+    ConstIterator<T> operator+(size_t val) const;
+    ConstIterator<T> operator-(size_t val) const;
+    ConstIterator<T> &operator+=(size_t val);
+    ConstIterator<T> &operator-=(size_t val);
 
     std::ptrdiff_t operator-(const ConstIterator<T> &iter);
 
@@ -41,14 +45,16 @@ public:
     ConstIterator<T> &operator=(ConstIterator<T> &&other) noexcept;
 
 protected:
-    const std::shared_ptr<T> *get_ptr() const;
-    void expride_check(const int line) const;
-    void index_check(const int line) const;
+    const std::shared_ptr<T> get_ptr() const;
+    void expride_check(int line) const;
+    void index_check(int line) const;
 
 private:
-    std::weak_ptr<T[]> ptr;
+    std::weak_ptr<T[]> data;
     size_t n_rows = 0;
     size_t n_cols = 0;
 };
+
+#include "const_iterator.inl"
 
 #endif // CONST_ITERATOR_H

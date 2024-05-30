@@ -4,7 +4,7 @@
 
 template <NumType T> template <NumType U> auto Matrix<T>::operator<=>(const Matrix<U> &other) const
 {
-    return n_rows * n_cols <=> other.n_rows * other.n_cols;
+    return n_rows <=> other.n_rows && n_cols <=> other.n_cols;
 }
 
 template <NumType T> bool Matrix<T>::operator==(const Matrix<T> &matrix) const
