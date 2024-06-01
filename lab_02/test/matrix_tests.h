@@ -3,6 +3,7 @@
 
 #include "test_assignment.inl"
 #include "test_constructors.inl"
+#include "test_functions.inl"
 #include "test_operators_add.inl"
 #include "test_operators_div.inl"
 #include "test_operators_mul.inl"

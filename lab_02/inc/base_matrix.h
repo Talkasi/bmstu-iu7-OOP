@@ -6,7 +6,7 @@ class BaseMatrix
 {
 public:
     BaseMatrix() noexcept;
-    BaseMatrix(const size_t n_rows, const size_t n_cols) noexcept;
+    BaseMatrix(size_t n_rows, size_t n_cols) noexcept;
 
     size_t getNCols() const noexcept;
     size_t getNRows() const noexcept;
@@ -14,7 +14,7 @@ public:
     bool isEmpty() const noexcept;
     bool isSquare() const noexcept;
 
-    virtual ~BaseMatrix() = 0;
+    ~BaseMatrix() = default;
 
 protected:
     size_t n_rows = 0;

@@ -20,6 +20,14 @@ template <NumType T> void Matrix<T>::allocate(const size_t size)
     }
 }
 
+template <NumType T> void Matrix<T>::index_check(const size_t index, const int line) const
+{
+    if (index >= getNRows() * getNCols()) {
+        time_t cur_time = time(NULL);
+        throw IndexException(ctime(&cur_time), __FILE__, line, typeid(*this).name(), __FUNCTION__);
+    }
+}
+
 template <NumType T> void Matrix<T>::row_index_check(const size_t i, const int line) const
 {
     if (i >= getNRows()) {
@@ -54,7 +62,7 @@ template <NumType T> void Matrix<T>::det_check(const int line) const
     }
 }
 
-template <NumType T> void Matrix<T>::sum_sizes_check(const Matrix<T> &mtr, const int line) const
+template <NumType T> template <NumType U> void Matrix<T>::sum_sizes_check(const Matrix<U> &mtr, const int line) const
 {
     if (getNRows() != mtr.getNRows() || getNCols() != mtr.getNCols()) {
         time_t cur_time = time(NULL);
@@ -62,7 +70,7 @@ template <NumType T> void Matrix<T>::sum_sizes_check(const Matrix<T> &mtr, const
     }
 }
 
-template <NumType T> void Matrix<T>::mul_sizes_check(const Matrix<T> &mtr, const int line) const
+template <NumType T> template <NumType U> void Matrix<T>::mul_sizes_check(const Matrix<U> &mtr, const int line) const
 {
     if (getNCols() != mtr.getNRows()) {
         time_t cur_time = time(NULL);
@@ -70,7 +78,7 @@ template <NumType T> void Matrix<T>::mul_sizes_check(const Matrix<T> &mtr, const
     }
 }
 
-template <NumType T> void Matrix<T>::division_by_zero_check(const T &num, const int line) const
+template <NumType T> template <NumType U> void Matrix<T>::division_by_zero_check(const U &num, const int line) const
 {
     if (abs(num) < EPS) {
         time_t cur_time = time(NULL);

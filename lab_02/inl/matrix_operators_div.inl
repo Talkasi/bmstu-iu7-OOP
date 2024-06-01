@@ -14,7 +14,7 @@ template <NumType T> Matrix<T> Matrix<T>::operator/(const T &val) const
     return res;
 }
 
-template <NumType T> Matrix<T> &Matrix<T>::operator/=(const T &val) const
+template <NumType T> Matrix<T> &Matrix<T>::operator/=(const T &val)
 {
     division_by_zero_check(val, __LINE__);
 

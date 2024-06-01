@@ -10,20 +10,15 @@
 template <NumType T> class Matrix : public BaseMatrix
 {
 public:
-    friend Iterator<T>;
-    friend ConstIterator<T>;
-
     /* LIFETIME */
     Matrix() noexcept;
-    explicit Matrix(const size_t n_rows, const size_t n_cols);
-    Matrix(const size_t n_rows, const size_t n_cols, const T &fill_elem);
-    Matrix(const size_t n_rows, const size_t n_cols, const T **matrix);
-    Matrix(const std::initializer_list<std::initializer_list<T>> elems);
-
-    explicit Matrix(const Matrix<T> &matrix);
+    Matrix(size_t n_rows, size_t n_cols);
+    Matrix(size_t n_rows, size_t n_cols, const T &fill_elem);
+    Matrix(const T **matrix, size_t n_rows, size_t n_cols);
+    Matrix(const std::initializer_list<std::initializer_list<T>> &elems);
+    Matrix(const Matrix<T> &matrix);
     Matrix(Matrix<T> &&tmp_matrix) noexcept;
-
-    ~Matrix() override = default;
+    ~Matrix() noexcept = default;
 
     /* OPERATIONS */
     /* Comparison */
@@ -37,35 +32,42 @@ public:
     /* Assignment */
     Matrix<T> &operator=(const Matrix<T> &matrix);
     Matrix<T> &operator=(Matrix<T> &&tmp_matrix) noexcept;
-    Matrix<T> &operator=(std::initializer_list<std::initializer_list<T>> &elems);
+    Matrix<T> &operator=(const std::initializer_list<std::initializer_list<T>> &elems);
 
     /* Addition */
     Matrix<T> operator+(const T &val) const;
     Matrix<T> operator+(const Matrix<T> &matrix) const;
-    Matrix<T> &operator+=(const T &val) const;
-    Matrix<T> &operator+=(const Matrix<T> &matrix) const;
+    Matrix<T> &operator+=(const T &val);
+    Matrix<T> &operator+=(const Matrix<T> &matrix);
 
     /* Substraction */
     Matrix<T> operator-(const T &val) const;
     Matrix<T> operator-(const Matrix<T> &matrix) const;
-    Matrix<T> &operator-=(const T &val) const;
-    Matrix<T> &operator-=(const Matrix<T> &matrix) const;
+    Matrix<T> &operator-=(const T &val);
+    Matrix<T> &operator-=(const Matrix<T> &matrix);
 
     /* Multiplication */
     Matrix<T> operator*(const T &val) const;
     Matrix<T> operator*(const Matrix<T> &matrix) const;
-    Matrix<T> &operator*=(const T &val) const;
-    Matrix<T> &operator*=(const Matrix<T> &matrix) const;
+    Matrix<T> &operator*=(const T &val);
+    Matrix<T> &operator*=(const Matrix<T> &matrix);
+
+    template <NumType U> auto operator*(const U &val) const;
+    template <NumType U> auto operator*(const Matrix<U> &matrix) const;
 
     /* Division */
     Matrix<T> operator/(const T &val) const;
-    Matrix<T> &operator/=(const T &val) const;
+    Matrix<T> &operator/=(const T &val);
 
     /* Indexation */
-    T &at(const size_t i, const size_t j);
-    T &operator()(const size_t i, const size_t j);
-    const T &at(const size_t i, const size_t j) const;
-    const T &operator()(const size_t i, const size_t j) const;
+    T &at(size_t index);
+    T &at(size_t i, size_t j);
+    T &operator()(size_t index);
+    T &operator()(size_t i, size_t j);
+    const T &at(size_t index) const;
+    const T &at(size_t i, size_t j) const;
+    const T &operator()(size_t index) const;
+    const T &operator()(size_t i, size_t j) const;
 
     /* ITERATORS */
     Iterator<T> begin() noexcept;
@@ -80,31 +82,31 @@ public:
     /* Bool info */
     bool isIdentity() const;
     bool isZero() const;
-    bool isSquare() const;
 
-    static Matrix<T> zeroMatrix(const size_t n_rows, const size_t n_cols);
-    static Matrix<T> identityMatrix(const size_t n_rows, const size_t n_cols);
+    static Matrix<T> zeroMatrix(size_t n_rows, size_t n_cols);
+    static Matrix<T> identityMatrix(size_t n_rows, size_t n_cols);
 
     T det() const;
     Matrix<T> invert() const;
-    Matrix<T> &transpose() const;
+    Matrix<T> transpose() const;
 
-    void swap_rows(const size_t f_row, const size_t s_row);
-    void swap_cols(const size_t f_col, const size_t s_col);
+    void swap_rows(size_t f_row, size_t s_row);
+    void swap_cols(size_t f_col, size_t s_col);
 
 protected:
-    void allocate(const size_t size);
+    void allocate(size_t size);
 
     /* CHECKS */
-    void row_index_check(const size_t i, const int line) const;
-    void col_index_check(const size_t j, const int line) const;
-    void sum_sizes_check(const Matrix<T> &mtr, const int line) const;
-    void mul_sizes_check(const Matrix<T> &mtr, const int line) const;
-    void square_sizes_check(const int line) const;
-    void division_by_zero_check(const T &num, const int line) const;
-    void det_check(const int line) const;
+    void index_check(size_t i, int line) const;
+    void row_index_check(size_t i, int line) const;
+    void col_index_check(size_t j, int line) const;
+    template <NumType U> void sum_sizes_check(const Matrix<U> &mtr, int line) const;
+    template <NumType U> void mul_sizes_check(const Matrix<U> &mtr, int line) const;
+    void square_sizes_check(int line) const;
+    template <NumType U> void division_by_zero_check(const U &num, int line) const;
+    void det_check(int line) const;
 
-    static void exclude_copy(Matrix<T> &dst, const Matrix<T> &src, const size_t ex_row, const size_t ex_col);
+    static void exclude_copy(Matrix<T> &dst, const Matrix<T> &src, size_t ex_row, size_t ex_col);
 
 private:
     std::shared_ptr<T[]> data = nullptr;

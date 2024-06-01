@@ -23,20 +23,16 @@ template <NumType T> Matrix<T> &Matrix<T>::operator=(Matrix<T> &&tmp_matrix) noe
     return *this;
 }
 
-template <NumType T> Matrix<T> &Matrix<T>::operator=(std::initializer_list<std::initializer_list<T>> &elems)
+template <NumType T> Matrix<T> &Matrix<T>::operator=(const std::initializer_list<std::initializer_list<T>> &elems)
 {
     this->n_rows = elems.size();
     this->n_cols = elems.begin()->size();
     allocate(this->n_rows * this->n_cols);
 
-    auto elem_i = elems.begin();
-
-    for (size_t i = 0; elem_i < elems.end(); i++, elem_i++) {
-        auto elem_j = elem_i->begin();
-
-        for (size_t j = 0; j < elem_i->end(); j++, elem_j++)
-            data[i * n_cols + j] = *elem_j;
-    }
+    size_t i = 0;
+    for (auto elem_i : elems)
+        for (auto elem_j : elem_i)
+            data[i++] = elem_j;
 
     return *this;
 }
