@@ -9,7 +9,7 @@ Controller::Controller(QObject *parent) : QObject(parent), _state(FREE)
         cur_direction[cabin_id] = STAND;
 
         QObject::connect(cabin[cabin_id].get(), &Cabin::cabinFinishedBoarding, this, &Controller::reach_floor);
-        QObject::connect(&cabin[cabin_id]->_moveTimer, SIGNAL(timeout()), this, SLOT(manage_cabin()));
+        QObject::connect(&cabin[cabin_id]->_moveTimer, &QTimer::timeout, this, [=]() { manage_cabin((cabin_id_t)cabin_id); });
     }
 
     QObject::connect(this, &Controller::freeCabinSignal, this, [this](cabin_id_t cabin_id) { cabin[cabin_id]->cabinFree(); });
@@ -23,39 +23,43 @@ Controller::Controller(QObject *parent) : QObject(parent), _state(FREE)
         elevator_buttons[FIRST_CABIN_ID][floor_i - 1] = std::make_shared<ElevatorButton>(floor_i, FIRST_CABIN_ID);
         elevator_buttons[SECOND_CABIN_ID][floor_i - 1] = std::make_shared<ElevatorButton>(floor_i, SECOND_CABIN_ID);
 
-        QObject::connect(floor_buttons[UP_ID][floor_i - 1].get(), SIGNAL(activatedSignal()), this, SLOT(manage_cabin()));
-        QObject::connect(floor_buttons[DOWN_ID][floor_i - 1].get(), SIGNAL(activatedSignal()), this, SLOT(manage_cabin()));
-        QObject::connect(elevator_buttons[FIRST_CABIN_ID][floor_i - 1].get(), SIGNAL(activatedSignal()), this, SLOT(manage_cabin()));
-        QObject::connect(elevator_buttons[SECOND_CABIN_ID][floor_i - 1].get(), SIGNAL(activatedSignal()), this, SLOT(manage_cabin()));
+        QObject::connect(floor_buttons[UP_ID][floor_i - 1].get(), SIGNAL(activatedSignal()), this, SLOT(manage_cabins()));
+        QObject::connect(floor_buttons[DOWN_ID][floor_i - 1].get(), SIGNAL(activatedSignal()), this, SLOT(manage_cabins()));
+
+        QObject::connect(elevator_buttons[FIRST_CABIN_ID][floor_i - 1].get(), &ElevatorButton::activatedSignal, this,
+                         [=]() { manage_cabin(FIRST_CABIN_ID); });
+        QObject::connect(elevator_buttons[SECOND_CABIN_ID][floor_i - 1].get(), &ElevatorButton::activatedSignal, this,
+                         [=]() { manage_cabin(SECOND_CABIN_ID); });
 
         // Сигналы деактивации кнопки нельзя так просто подключать к менеджеру,
         // потому что есть необходимость в отключении нескольких кнопок за раз.
         // В итоге менеджер идет обрабатывать промежуточное состояние,
         // когда одна кнопка отключена, а вторая ещё нет.
-        QObject::connect(this, SIGNAL(buttonsDeactivatedSignal()), this, SLOT(manage_cabin()));
+        QObject::connect(this, SIGNAL(buttonsDeactivatedSignal(cabin_id_t)), this, SLOT(manage_cabin(cabin_id_t)));
 
         // NOTE(Talkasi): For more convinient testing
-        QObject::connect(floor_buttons[UP_ID][floor_i - 1].get(), &FloorButton::activatedSignal, \
-                         this, [=]() { floor_button_change(floor_i, UP_ID, true); });
-        QObject::connect(floor_buttons[DOWN_ID][floor_i - 1].get(), &FloorButton::activatedSignal, \
-                         this, [=]() { floor_button_change(floor_i, DOWN_ID, true); });
-        QObject::connect(elevator_buttons[FIRST_CABIN_ID][floor_i - 1].get(), &ElevatorButton::activatedSignal, \
-                         this, [=]() { cabin_button_change(floor_i, FIRST_CABIN_ID, true); });
-        QObject::connect(elevator_buttons[SECOND_CABIN_ID][floor_i - 1].get(), &ElevatorButton::activatedSignal, \
-                         this, [=]() { cabin_button_change(floor_i, SECOND_CABIN_ID, true); });
+        QObject::connect(floor_buttons[UP_ID][floor_i - 1].get(), &FloorButton::activatedSignal, this,
+                         [=]() { floor_button_change(floor_i, UP_ID, true); });
+        QObject::connect(floor_buttons[DOWN_ID][floor_i - 1].get(), &FloorButton::activatedSignal, this,
+                         [=]() { floor_button_change(floor_i, DOWN_ID, true); });
+        QObject::connect(elevator_buttons[FIRST_CABIN_ID][floor_i - 1].get(), &ElevatorButton::activatedSignal, this,
+                         [=]() { cabin_button_change(floor_i, FIRST_CABIN_ID, true); });
+        QObject::connect(elevator_buttons[SECOND_CABIN_ID][floor_i - 1].get(), &ElevatorButton::activatedSignal, this,
+                         [=]() { cabin_button_change(floor_i, SECOND_CABIN_ID, true); });
 
         // NOTE(Talkasi): For more convinient testing
-        QObject::connect(floor_buttons[UP_ID][floor_i - 1].get(), &FloorButton::deactivatedSignal, \
-                         this, [=]() { floor_button_change(floor_i, UP_ID, false); });
-        QObject::connect(floor_buttons[DOWN_ID][floor_i - 1].get(), &FloorButton::deactivatedSignal, \
-                         this, [=]() { floor_button_change(floor_i, DOWN_ID, false); });
-        QObject::connect(elevator_buttons[FIRST_CABIN_ID][floor_i - 1].get(), &ElevatorButton::deactivatedSignal, \
-                         this, [=]() { cabin_button_change(floor_i, FIRST_CABIN_ID, false); });
-        QObject::connect(elevator_buttons[SECOND_CABIN_ID][floor_i - 1].get(), &ElevatorButton::deactivatedSignal, \
-                         this, [=]() { cabin_button_change(floor_i, SECOND_CABIN_ID, false); });
+        QObject::connect(floor_buttons[UP_ID][floor_i - 1].get(), &FloorButton::deactivatedSignal, this,
+                         [=]() { floor_button_change(floor_i, UP_ID, false); });
+        QObject::connect(floor_buttons[DOWN_ID][floor_i - 1].get(), &FloorButton::deactivatedSignal, this,
+                         [=]() { floor_button_change(floor_i, DOWN_ID, false); });
+        QObject::connect(elevator_buttons[FIRST_CABIN_ID][floor_i - 1].get(), &ElevatorButton::deactivatedSignal, this,
+                         [=]() { cabin_button_change(floor_i, FIRST_CABIN_ID, false); });
+        QObject::connect(elevator_buttons[SECOND_CABIN_ID][floor_i - 1].get(), &ElevatorButton::deactivatedSignal, this,
+                         [=]() { cabin_button_change(floor_i, SECOND_CABIN_ID, false); });
     }
 
     QObject::connect(this, SIGNAL(freeControllerSignal()), this, SLOT(free_controller()));
+    QObject::connect(this, SIGNAL(manageCabinSignal(cabin_id_t)), this, SLOT(manage_cabin(cabin_id_t)));
 }
 
 static direction_t get_direction(int difference)
@@ -131,7 +135,8 @@ void Controller::new_floor_destination(int floor_n, direction_t direction)
     if (direction == UP) {
         to_visit[desided_cabin_id][TO_VISIT_WHILE_UP][floor_n - 1] = true;
         emit floor_buttons[UP_ID][floor_n - 1]->activateSignal();
-    } else {
+    }
+    else {
         to_visit[desided_cabin_id][TO_VISIT_WHILE_DOWN][floor_n - 1] = true;
         emit floor_buttons[DOWN_ID][floor_n - 1]->activateSignal();
     }
@@ -162,12 +167,13 @@ void Controller::reach_floor(int floor_n, cabin_id_t cabin_id)
     if (cur_direction[cabin_id] == UP) {
         to_visit[cabin_id][TO_VISIT_WHILE_UP][floor_n - 1] = false;
         emit floor_buttons[UP_ID][floor_n - 1]->deactivateSignal();
-    } else {
+    }
+    else {
         to_visit[cabin_id][TO_VISIT_WHILE_DOWN][floor_n - 1] = false;
         emit floor_buttons[DOWN_ID][floor_n - 1]->deactivateSignal();
     }
 
-    emit buttonsDeactivatedSignal();
+    emit buttonsDeactivatedSignal(cabin_id);
 }
 
 direction_t Controller::get_next_direction(cabin_id_t cabin_id)
@@ -180,8 +186,7 @@ direction_t Controller::get_next_direction(cabin_id_t cabin_id)
         int min_possible_distance = N_FLOORS;
 
         for (int floor_i = 0; floor_i < N_FLOORS; ++floor_i) {
-            if (to_visit[cabin_id][TO_VISIT_ON_ANY][floor_i] ||
-                to_visit[cabin_id][TO_VISIT_WHILE_UP][floor_i] ||
+            if (to_visit[cabin_id][TO_VISIT_ON_ANY][floor_i] || to_visit[cabin_id][TO_VISIT_WHILE_UP][floor_i] ||
                 to_visit[cabin_id][TO_VISIT_WHILE_DOWN][floor_i]) {
                 int difference = cur_floor_i[cabin_id] - floor_i;
                 if (min_possible_distance > difference && difference) {
@@ -194,7 +199,7 @@ direction_t Controller::get_next_direction(cabin_id_t cabin_id)
         if (min_possible_distance == N_FLOORS)
             return STAND;
 
-        if (dst_visit_point  > cur_floor_i[cabin_id])
+        if (dst_visit_point > cur_floor_i[cabin_id])
             return UP;
         else
             return DOWN;
@@ -206,12 +211,11 @@ direction_t Controller::get_next_direction(cabin_id_t cabin_id)
          * Ищем желающих поехать по ходу движения кабины, к которым можно заехать в текущем её положении.
          */
         if (cur_direction[cabin_id] == UP) {
-            if (to_visit[cabin_id][TO_VISIT_ON_ANY][floor_i] ||
-                to_visit[cabin_id][TO_VISIT_WHILE_UP][floor_i])
+            if (to_visit[cabin_id][TO_VISIT_ON_ANY][floor_i] || to_visit[cabin_id][TO_VISIT_WHILE_UP][floor_i])
                 return UP;
-        } else {
-            if (to_visit[cabin_id][TO_VISIT_ON_ANY][floor_i] ||
-                to_visit[cabin_id][TO_VISIT_WHILE_DOWN][floor_i])
+        }
+        else {
+            if (to_visit[cabin_id][TO_VISIT_ON_ANY][floor_i] || to_visit[cabin_id][TO_VISIT_WHILE_DOWN][floor_i])
                 return DOWN;
         }
     }
@@ -250,12 +254,12 @@ direction_t Controller::get_next_direction(cabin_id_t cabin_id)
     }
 
     // Больше целевых этажей нет, в приоритет ставим направление по ходу движения
-    if ((to_visit[cabin_id][TO_VISIT_WHILE_UP][cur_floor_i[cabin_id]] ||
-         to_visit[cabin_id][TO_VISIT_ON_ANY][cur_floor_i[cabin_id]]) && cur_direction[cabin_id] == UP)
+    if ((to_visit[cabin_id][TO_VISIT_WHILE_UP][cur_floor_i[cabin_id]] || to_visit[cabin_id][TO_VISIT_ON_ANY][cur_floor_i[cabin_id]]) &&
+        cur_direction[cabin_id] == UP)
         return UP;
 
-    if ((to_visit[cabin_id][TO_VISIT_WHILE_DOWN][cur_floor_i[cabin_id]] ||
-         to_visit[cabin_id][TO_VISIT_ON_ANY][cur_floor_i[cabin_id]]) && cur_direction[cabin_id] == DOWN)
+    if ((to_visit[cabin_id][TO_VISIT_WHILE_DOWN][cur_floor_i[cabin_id]] || to_visit[cabin_id][TO_VISIT_ON_ANY][cur_floor_i[cabin_id]]) &&
+        cur_direction[cabin_id] == DOWN)
         return DOWN;
 
     // Можно поехать только против хода движения
@@ -273,8 +277,7 @@ int Controller::get_next_visit_point(cabin_id_t cabin_id)
         int min_possible_distance = N_FLOORS;
 
         for (int floor_i = 0; floor_i < N_FLOORS; ++floor_i) {
-            if (to_visit[cabin_id][TO_VISIT_ON_ANY][floor_i] ||
-                to_visit[cabin_id][TO_VISIT_WHILE_UP][floor_i] ||
+            if (to_visit[cabin_id][TO_VISIT_ON_ANY][floor_i] || to_visit[cabin_id][TO_VISIT_WHILE_UP][floor_i] ||
                 to_visit[cabin_id][TO_VISIT_WHILE_DOWN][floor_i]) {
                 int difference = cur_floor_i[cabin_id] - floor_i;
                 if (min_possible_distance > difference) {
@@ -285,18 +288,16 @@ int Controller::get_next_visit_point(cabin_id_t cabin_id)
         }
     }
     else {
-        for (int floor_i = cur_floor_i[cabin_id]; 0 <= floor_i && floor_i < N_FLOORS;
-             floor_i += cur_direction[cabin_id]) {
+        for (int floor_i = cur_floor_i[cabin_id]; 0 <= floor_i && floor_i < N_FLOORS; floor_i += cur_direction[cabin_id]) {
             /*
              * Ищем желающих поехать по ходу движения кабины, к которым можно заехать в текущем её положении.
              */
             if (cur_direction[cabin_id] == UP) {
-                if (to_visit[cabin_id][TO_VISIT_ON_ANY][floor_i] ||
-                    to_visit[cabin_id][TO_VISIT_WHILE_UP][floor_i])
+                if (to_visit[cabin_id][TO_VISIT_ON_ANY][floor_i] || to_visit[cabin_id][TO_VISIT_WHILE_UP][floor_i])
                     return floor_i;
-            } else {
-                if (to_visit[cabin_id][TO_VISIT_ON_ANY][floor_i] ||
-                    to_visit[cabin_id][TO_VISIT_WHILE_DOWN][floor_i])
+            }
+            else {
+                if (to_visit[cabin_id][TO_VISIT_ON_ANY][floor_i] || to_visit[cabin_id][TO_VISIT_WHILE_DOWN][floor_i])
                     return floor_i;
             }
         }
@@ -324,45 +325,66 @@ int Controller::get_next_visit_point(cabin_id_t cabin_id)
     return dst_visit_point;
 }
 
-void Controller::manage_cabin()
+bool Controller::all_cabins_are_free()
 {
-    _state = MANAGING_CABIN;
-
-    int cabins_free = 0;
     for (int cabin_id = 0; cabin_id < N_CABINS; ++cabin_id) {
-        int dst_floor = get_next_visit_point((cabin_id_t)cabin_id);
-
-        // NOTE(Talkasi): For more convinient testing
-        if (dst_floor != FLOOR_NOT_FOUND)
-            qInfo("-------------------------------------------------->" \
-                  " Текущая цель лифта №%d — этаж №%d.", cabin_id + 1, dst_floor + 1);
-        else
-            qInfo("-------------------------------------------------->" \
-                  " Целей лифта №%d нет.", cabin_id + 1);
-
-        if (dst_floor == FLOOR_NOT_FOUND) {
-            cur_direction[cabin_id] = STAND;
-            emit freeCabinSignal((cabin_id_t)cabin_id);
-            ++cabins_free;
-        }
-        else if (dst_floor > cur_floor_i[cabin_id]) {
-            cur_direction[cabin_id] = UP;
-            emit moveCabinUpSignal((cabin_id_t)cabin_id);
-            ++cur_floor_i[cabin_id];
-        }
-        else if (dst_floor < cur_floor_i[cabin_id]) {
-            cur_direction[cabin_id] = DOWN;
-            emit moveCabinDownSignal((cabin_id_t)cabin_id);
-            --cur_floor_i[cabin_id];
-        }
-        else {
-            cur_direction[cabin_id] = get_next_direction((cabin_id_t)cabin_id);
-            emit stopCabinSignal((cabin_id_t)cabin_id);
+        for (int floor_i = 0; floor_i < N_FLOORS; ++floor_i) {
+            if (to_visit[cabin_id][TO_VISIT_ON_ANY][floor_i] || to_visit[cabin_id][TO_VISIT_WHILE_UP][floor_i] ||
+                to_visit[cabin_id][TO_VISIT_WHILE_DOWN][floor_i]) {
+                return false;
+            }
         }
     }
 
-    if (cabins_free == N_CABINS)
+    return true;
+}
+
+void Controller::manage_cabin(cabin_id_t cabin_id)
+{
+    if (_state == FREE)
+        return;
+
+    _state = MANAGING_CABIN;
+
+    int dst_floor = get_next_visit_point((cabin_id_t)cabin_id);
+
+    // NOTE(Talkasi): For more convinient testing
+    // if (dst_floor != FLOOR_NOT_FOUND)
+    //     qInfo("-------------------------------------------------->" \
+    //           " Текущая цель лифта №%d — этаж №%d.", cabin_id + 1, dst_floor + 1);
+    // else
+    //     qInfo("-------------------------------------------------->" \
+    //           " Целей лифта №%d нет.", cabin_id + 1);
+
+    if (dst_floor == FLOOR_NOT_FOUND) {
+        cur_direction[cabin_id] = STAND;
+        emit freeCabinSignal((cabin_id_t)cabin_id);
+    }
+    else if (dst_floor > cur_floor_i[cabin_id]) {
+        cur_direction[cabin_id] = UP;
+        emit moveCabinUpSignal((cabin_id_t)cabin_id);
+        ++cur_floor_i[cabin_id];
+    }
+    else if (dst_floor < cur_floor_i[cabin_id]) {
+        cur_direction[cabin_id] = DOWN;
+        emit moveCabinDownSignal((cabin_id_t)cabin_id);
+        --cur_floor_i[cabin_id];
+    }
+    else {
+        cur_direction[cabin_id] = get_next_direction((cabin_id_t)cabin_id);
+        emit stopCabinSignal((cabin_id_t)cabin_id);
+    }
+
+    if (all_cabins_are_free())
         emit freeControllerSignal();
+}
+
+void Controller::manage_cabins()
+{
+    _state = MANAGING_CABINS;
+
+    for (int cabin_id = 0; cabin_id < N_CABINS; ++cabin_id)
+        emit manageCabinSignal((cabin_id_t)cabin_id);
 }
 
 void Controller::free_controller()

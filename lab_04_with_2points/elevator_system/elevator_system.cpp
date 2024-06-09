@@ -7,8 +7,10 @@ ElevatorSystem::ElevatorSystem(QObject *parent) : QObject(parent), _state(FREE)
     QObject::connect(&_controller, SIGNAL(controllerFreedSignal()), this, SLOT(free_system()));
 
     // NOTE(Talkasi): For more convinient testing
-    QObject::connect(&_controller, SIGNAL(controller_cabin_button_change(int, cabin_id_t, bool)), this, SLOT(system_cabin_button_change(int, cabin_id_t, bool)));
-    QObject::connect(&_controller, SIGNAL(controller_floor_button_change(int, direction_id_t, bool)), this, SLOT(system_floor_button_change(int, direction_id_t, bool)));
+    QObject::connect(&_controller, SIGNAL(controller_cabin_button_change(int, cabin_id_t, bool)), this,
+                     SLOT(system_cabin_button_change(int, cabin_id_t, bool)));
+    QObject::connect(&_controller, SIGNAL(controller_floor_button_change(int, direction_id_t, bool)), this,
+                     SLOT(system_floor_button_change(int, direction_id_t, bool)));
 }
 
 void ElevatorSystem::manage_cabin_call(int floor_n, cabin_id_t elevator_id)

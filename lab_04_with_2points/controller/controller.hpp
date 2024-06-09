@@ -2,7 +2,7 @@
 #define CONTROLLER_H
 #include "button/elevator_button/elevator_button.hpp"
 #include "button/floor_button/floor_button.hpp"
-#include "cabin_new/cabin.h"
+#include "cabin/cabin.h"
 #include "config.hpp"
 #include <QObject>
 
@@ -22,7 +22,9 @@ signals:
     void controllerFreedSignal();
 
     void freeControllerSignal();
-    void buttonsDeactivatedSignal();
+    void buttonsDeactivatedSignal(cabin_id_t cabin_id);
+
+    void manageCabinSignal(cabin_id_t cabin_id);
 
     // NOTE(Talkasi): For more convinient testing
     void controller_cabin_button_change(int floor_n, cabin_id_t cabin_id, bool is_active);
@@ -33,12 +35,12 @@ public slots:
     void new_floor_destination(int floor_n, direction_t direction);
     void new_cabin_destination(int floor_n, cabin_id_t cabin_id);
     void reach_floor(int floor_n, cabin_id_t cabin_id);
-    void manage_cabin();
+    void manage_cabins();
+    void manage_cabin(cabin_id_t cabin_id);
 
     // NOTE(Talkasi): For more convinient testing
     void floor_button_change(int floor_n, direction_id_t direction_id, bool is_active);
     void cabin_button_change(int floor_n, cabin_id_t cabin_id, bool is_active);
-
 
 private:
     bool all_cabins_are_free();
@@ -51,6 +53,7 @@ private:
         MANAGING_NEW_FLOOR_DEST,
         MANAGING_NEW_CABIN_DEST,
         REACH_FLOOR,
+        MANAGING_CABINS,
         MANAGING_CABIN,
     };
 

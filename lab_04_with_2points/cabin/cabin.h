@@ -1,7 +1,7 @@
 #ifndef CABIN_H
 #define CABIN_H
 #include "config.hpp"
-#include "doors_new/doors.h"
+#include "doors/doors.h"
 #include <QObject>
 #include <QTimer>
 

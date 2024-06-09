@@ -48,11 +48,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
         line->setFrameShadow(QFrame::Sunken);
         floor_grid->addWidget(line, 2, 0, 1, 2);
 
-        QObject::connect(floor_buttons[UP_ID][i - 1].get(), &QPushButton::clicked, \
-            [=]() { my_elevator_system.manage_floor_call(i, UP); });
+        QObject::connect(floor_buttons[UP_ID][i - 1].get(), &QPushButton::clicked, [=]() { my_elevator_system.manage_floor_call(i, UP); });
 
-        QObject::connect(floor_buttons[DOWN_ID][i - 1].get(), &QPushButton::clicked, \
-            [=]() { my_elevator_system.manage_floor_call(i, DOWN); });
+        QObject::connect(floor_buttons[DOWN_ID][i - 1].get(), &QPushButton::clicked,
+                         [=]() { my_elevator_system.manage_floor_call(i, DOWN); });
 
         gridLayout->addLayout(floor_grid, N_FLOORS - i + 1, 0, 1, 1);
     }
@@ -73,8 +72,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     floor1_grid->addWidget(floor_buttons[UP_ID][0].get(), 0, 1, 1, 1);
     gridLayout->addLayout(floor1_grid, N_FLOORS, 0, 1, 1);
 
-    QObject::connect(floor_buttons[UP_ID][0].get(), &QPushButton::clicked, \
-        [=]() { my_elevator_system.manage_floor_call(1, UP); });
+    QObject::connect(floor_buttons[UP_ID][0].get(), &QPushButton::clicked, [=]() { my_elevator_system.manage_floor_call(1, UP); });
 
     // Last floor
     QGridLayout *floorN_grid = new QGridLayout();
@@ -91,8 +89,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     floor_buttons[DOWN_ID][N_FLOORS - 1]->setText(QCoreApplication::translate("MainWindow", "\342\207\251", nullptr));
     floorN_grid->addWidget(floor_buttons[DOWN_ID][N_FLOORS - 1].get(), 0, 1, 1, 1);
 
-    QObject::connect(floor_buttons[DOWN_ID][N_FLOORS - 1].get(), &QPushButton::clicked, \
-        [=]() { my_elevator_system.manage_floor_call(N_FLOORS, DOWN); });
+    QObject::connect(floor_buttons[DOWN_ID][N_FLOORS - 1].get(), &QPushButton::clicked,
+                     [=]() { my_elevator_system.manage_floor_call(N_FLOORS, DOWN); });
 
     QFrame *lineN = new QFrame(gridLayoutWidget);
     lineN->setObjectName("line_" + QString::number(N_FLOORS));
@@ -101,12 +99,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     floorN_grid->addWidget(lineN, 1, 0, 1, 2);
     gridLayout->addLayout(floorN_grid, 1, 0, 1, 1);
 
-    QObject::connect(&my_elevator_system, SIGNAL(change_floor_button_signal(int, direction_id_t, bool)), \
-                     this, SLOT(change_floor_button_style(int, direction_id_t, bool)));
+    QObject::connect(&my_elevator_system, SIGNAL(change_floor_button_signal(int, direction_id_t, bool)), this,
+                     SLOT(change_floor_button_style(int, direction_id_t, bool)));
 
-    QObject::connect(&my_elevator_system, SIGNAL(change_floor_button_signal(int, direction_id_t, bool)), \
-                     this, SLOT(change_floor_button_style(int, direction_id_t, bool)));
-
+    QObject::connect(&my_elevator_system, SIGNAL(change_floor_button_signal(int, direction_id_t, bool)), this,
+                     SLOT(change_floor_button_style(int, direction_id_t, bool)));
 
     QSpacerItem *horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Policy::Fixed, QSizePolicy::Policy::Minimum);
     gridLayout->addItem(horizontalSpacer, 0, 1, 1, 1);
@@ -120,7 +117,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     QLabel *elevator2_label = new QLabel(gridLayoutWidget);
     elevator2_label->setObjectName("elevator2_label");
     elevator2_label->setAlignment(Qt::AlignCenter);
-    elevator2_label->setText(QCoreApplication::translate("MainWindow", "Лфифт 2", nullptr));
+    elevator2_label->setText(QCoreApplication::translate("MainWindow", "Лифт 2", nullptr));
     gridLayout->addWidget(elevator2_label, 0, 3, 1, 1);
 
     auto &tmp_elevator_system = my_elevator_system;
@@ -128,18 +125,17 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
         for (int cabin_id = 0; cabin_id < N_CABINS; ++cabin_id) {
             elevator_buttons[cabin_id][i - 1] = std::make_shared<QPushButton>(gridLayoutWidget);
             elevator_buttons[cabin_id][i - 1]->setObjectName("el1_floor" + QString::number(i));
-            elevator_buttons[cabin_id][i - 1]->setText(
-                QCoreApplication::translate("MainWindow", qPrintable(QString::number(i)), nullptr));
+            elevator_buttons[cabin_id][i - 1]->setText(QCoreApplication::translate("MainWindow", qPrintable(QString::number(i)), nullptr));
 
             if (i != N_FLOORS && i != 1)
                 elevator_buttons[cabin_id][i - 1]->setMinimumSize(QSize(0, 50));
             gridLayout->addWidget(elevator_buttons[cabin_id][i - 1].get(), N_FLOORS - i + 1, 2 + cabin_id, 1, 1);
 
-            QObject::connect(elevator_buttons[cabin_id][i - 1].get(), &QPushButton::clicked, \
-                [=]() { my_elevator_system.manage_cabin_call(i, (cabin_id_t)cabin_id); });
+            QObject::connect(elevator_buttons[cabin_id][i - 1].get(), &QPushButton::clicked,
+                             [=]() { my_elevator_system.manage_cabin_call(i, (cabin_id_t)cabin_id); });
 
-            QObject::connect(&my_elevator_system, SIGNAL(change_cabin_button_signal(int, cabin_id_t, bool)), \
-                             this, SLOT(change_cabin_button_style(int, cabin_id_t, bool)));
+            QObject::connect(&my_elevator_system, SIGNAL(change_cabin_button_signal(int, cabin_id_t, bool)), this,
+                             SLOT(change_cabin_button_style(int, cabin_id_t, bool)));
         }
     }
 
@@ -165,7 +161,8 @@ void MainWindow::change_floor_button_style(int floor_n, direction_id_t direction
     if (is_active) {
         floor_buttons[direction_id][floor_n - 1]->setStyleSheet(QString("background-color:") + COLOR_BUTTON_ACTIVE);
         this->update();
-    } else {
+    }
+    else {
         floor_buttons[direction_id][floor_n - 1]->setStyleSheet(QString("background-color:") + COLOR_BUTTON_INACTIVE);
         this->update();
     }
@@ -177,7 +174,8 @@ void MainWindow::change_cabin_button_style(int floor_n, cabin_id_t cabin_id, boo
     if (is_active) {
         elevator_buttons[cabin_id][floor_n - 1]->setStyleSheet(QString("background-color:") + COLOR_BUTTON_ACTIVE);
         this->update();
-    } else {
+    }
+    else {
         elevator_buttons[cabin_id][floor_n - 1]->setStyleSheet(QString("background-color:") + COLOR_BUTTON_INACTIVE);
         this->update();
     }
