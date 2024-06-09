@@ -26,7 +26,7 @@ void Cabin::moveCabinUp()
         return;
 
     _state = MOVING_UP;
-    qInfo("[!] Лифт №%d проезжает этаж №%d.", _id + 1, _cur_floor);
+    qInfo("[!] Лифт №%d едет c этажа №%d на этаж №%d.", _id + 1, _cur_floor, _cur_floor + UP);
     ++_cur_floor;
     _moveTimer.start(MOVE_TIME);
 }
@@ -37,7 +37,7 @@ void Cabin::moveCabinDown()
         return;
 
     _state = MOVING_DOWN;
-    qInfo("[!] Лифт №%d проезжает этаж №%d.", _id + 1, _cur_floor);
+    qInfo("[!] Лифт №%d едет c этажа №%d на этаж №%d.", _id + 1, _cur_floor, _cur_floor + DOWN);
     --_cur_floor;
     _moveTimer.start(MOVE_TIME);
 }

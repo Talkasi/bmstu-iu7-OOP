@@ -20,6 +20,8 @@ enum direction_id_t
     DOWN_ID
 };
 
+
+#define FLOOR_NOT_FOUND -50
 #define N_DIRECTIONS 2
 
 #define COLOR_BUTTON_ACTIVE "green"
