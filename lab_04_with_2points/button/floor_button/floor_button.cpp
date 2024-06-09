@@ -30,9 +30,9 @@ void FloorButton::deactivateSlot()
 
     this->_state = INACTIVE;
     if (_direction == UP)
-        qInfo("[!] На этаже №%d кнопка вызова лифта наверх деактивирована.", _buttonFloorNumber + 1);
+        qInfo("[!] На этаже №%d кнопка вызова лифта наверх деактивирована.", _buttonFloorNumber);
     else
-        qInfo("[!] На этаже №%d кнопка вызова лифта вниз деактивирована.", _buttonFloorNumber + 1);
+        qInfo("[!] На этаже №%d кнопка вызова лифта вниз деактивирована.", _buttonFloorNumber);
 
     emit deactivatedSignal();
 }
