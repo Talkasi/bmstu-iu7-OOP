@@ -19,10 +19,12 @@ public:
     ~MainWindow();
 
 signals:
+    // NOTE(Talkasi): For more convinient testing
     void client_call_from_cabin(int floor_n, cabin_id_t cabin_id);
     void client_call_from_floor(int floor_n, direction_t direction);
 
 private slots:
+    // NOTE(Talkasi): For more convinient testing
     void change_cabin_button_style(int floor_n, cabin_id_t cabin_id, bool is_active);
     void change_floor_button_style(int floor_n, direction_id_t direction, bool is_active);
 
