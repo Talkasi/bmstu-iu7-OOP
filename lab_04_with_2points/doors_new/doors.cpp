@@ -19,7 +19,7 @@ void Doors::startOpening()
         return;
 
     currentState = OPENING;
-    qInfo("[*] Двери лифта №%d открываются...", _cabin_id + 1);
+    qInfo(GREEN_TEXT_COLOR "[*] Двери лифта №%d открываются..." NO_TEXT_COLOR, _cabin_id + 1);
     openDoorTimer.start(WAIT_TIME);
 }
 
@@ -29,7 +29,7 @@ void Doors::open()
         return;
 
     currentState = OPENED;
-    qInfo("[*] Двери лифта №%d открылись.", _cabin_id + 1);
+    qInfo(GREEN_TEXT_COLOR "[*] Двери лифта №%d открылись." NO_TEXT_COLOR, _cabin_id + 1);
     openStateDoorTimer.start(WAIT_TIME);
 }
 
@@ -39,7 +39,7 @@ void Doors::startClosing()
         return;
 
     currentState = CLOSING;
-    qInfo("[*] Двери лифта №%d закрываются...", _cabin_id + 1);
+    qInfo(GREEN_TEXT_COLOR "[*] Двери лифта №%d закрываются..." NO_TEXT_COLOR, _cabin_id + 1);
     closeDoorTimer.start(WAIT_TIME);
 }
 
@@ -49,6 +49,6 @@ void Doors::close()
         return;
 
     currentState = CLOSED;
-    qInfo("[*] Двери лифта №%d закрылись.", _cabin_id + 1);
+    qInfo(GREEN_TEXT_COLOR "[*] Двери лифта №%d закрылись." NO_TEXT_COLOR, _cabin_id + 1);
     emit doorIsClosed();
 }

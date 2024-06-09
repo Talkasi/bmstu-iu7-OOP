@@ -19,8 +19,10 @@ signals:
     void freeCabinSignal(cabin_id_t cabin_id);
 
     void reachFloorSignal();
-    void controller_freed();
-    void free_controller_signal();
+    void controllerFreedSignal();
+
+    void freeControllerSignal();
+    void buttonsDeactivatedSignal();
 
     // NOTE(Talkasi): For more convinient testing
     void controller_cabin_button_change(int floor_n, cabin_id_t cabin_id, bool is_active);
@@ -39,6 +41,7 @@ public slots:
 
 
 private:
+    bool all_cabins_are_free();
     int get_next_visit_point(cabin_id_t cabin_id);
     direction_t get_next_direction(cabin_id_t cabin_id);
 
@@ -53,7 +56,8 @@ private:
 
     controller_state_t _state;
     std::unique_ptr<Cabin> cabin[N_CABINS] = {};
-    bool to_visit[N_CABINS][N_FLOORS] = {};
+
+    bool to_visit[N_CABINS][N_CASES_TO_VISIT][N_FLOORS] = {};
 
     int cur_floor_i[N_CABINS] = {};
     direction_t cur_direction[N_CABINS] = {};

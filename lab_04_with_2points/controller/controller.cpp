@@ -28,10 +28,11 @@ Controller::Controller(QObject *parent) : QObject(parent), _state(FREE)
         QObject::connect(elevator_buttons[FIRST_CABIN_ID][floor_i - 1].get(), SIGNAL(activatedSignal()), this, SLOT(manage_cabin()));
         QObject::connect(elevator_buttons[SECOND_CABIN_ID][floor_i - 1].get(), SIGNAL(activatedSignal()), this, SLOT(manage_cabin()));
 
-        QObject::connect(floor_buttons[UP_ID][floor_i - 1].get(), SIGNAL(deactivatedSignal()), this, SLOT(manage_cabin()));
-        QObject::connect(floor_buttons[DOWN_ID][floor_i - 1].get(), SIGNAL(deactivatedSignal()), this, SLOT(manage_cabin()));
-        QObject::connect(elevator_buttons[FIRST_CABIN_ID][floor_i - 1].get(), SIGNAL(deactivatedSignal()), this, SLOT(manage_cabin()));
-        QObject::connect(elevator_buttons[SECOND_CABIN_ID][floor_i - 1].get(), SIGNAL(deactivatedSignal()), this, SLOT(manage_cabin()));
+        // Сигналы деактивации кнопки нельзя так просто подключать к менеджеру,
+        // потому что есть необходимость в отключении нескольких кнопок за раз.
+        // В итоге менеджер идет обрабатывать промежуточное состояние,
+        // когда одна кнопка отключена, а вторая ещё нет.
+        QObject::connect(this, SIGNAL(buttonsDeactivatedSignal()), this, SLOT(manage_cabin()));
 
         // NOTE(Talkasi): For more convinient testing
         QObject::connect(floor_buttons[UP_ID][floor_i - 1].get(), &FloorButton::activatedSignal, \
@@ -54,7 +55,7 @@ Controller::Controller(QObject *parent) : QObject(parent), _state(FREE)
                          this, [=]() { cabin_button_change(floor_i, SECOND_CABIN_ID, false); });
     }
 
-    QObject::connect(this, SIGNAL(free_controller_signal()), this, SLOT(free_controller()));
+    QObject::connect(this, SIGNAL(freeControllerSignal()), this, SLOT(free_controller()));
 }
 
 static direction_t get_direction(int difference)
@@ -67,6 +68,13 @@ static direction_t get_direction(int difference)
 
 void Controller::new_floor_destination(int floor_n, direction_t direction)
 {
+    // Если какой-то кабине уже поручена обработка этого вызова, выходим.
+    for (int cabin_id = 0; cabin_id < N_CABINS; ++cabin_id) {
+        if ((direction == DOWN && to_visit[cabin_id][TO_VISIT_WHILE_DOWN][floor_n - 1]) ||
+            (direction == UP && to_visit[cabin_id][TO_VISIT_WHILE_UP][floor_n - 1]))
+            return;
+    }
+
     _state = MANAGING_NEW_FLOOR_DEST;
 
     cabin_id_t desided_cabin_id = FIRST_CABIN_ID;
@@ -81,8 +89,10 @@ void Controller::new_floor_destination(int floor_n, direction_t direction)
         int cur_distance = floor_n - cur_floor_i[cur_cabin_id];
         direction_t cabin_needs_to_move = get_direction(cur_distance);
 
-        // Очевидный случай:
-        // Нам надо наверх (вниз), кабина ниже (выше) нас и едет наверх (вниз)
+        /*
+         * Очевидный случай:
+         * Нам надо наверх (вниз), кабина ниже (выше) нас и едет наверх (вниз)
+         */
         if (cur_direction[cur_cabin_id] == STAND ||
             (cabin_needs_to_move == cur_direction[cur_cabin_id] && direction == cur_direction[cur_cabin_id])) {
             if (min_possible_distance > cur_distance) {
@@ -102,32 +112,39 @@ void Controller::new_floor_destination(int floor_n, direction_t direction)
          * Выбираем ту кабину, которая ближе к заданному этажу и ?
          */
 
-        int min_n_to_visit = N_FLOORS;
-        for (int cur_cabin_id = 0; cur_cabin_id < N_CABINS; ++cur_cabin_id) {
-            int n_to_visit = 0;
-            for (int i = 0; i <= N_FLOORS; ++i)
-                n_to_visit += to_visit[cur_cabin_id][i];
+        // TODO(Talkasi): This manager is completelly wrong now
 
-            if (n_to_visit < min_n_to_visit) {
-                desided_cabin_id = (cabin_id_t)cur_cabin_id;
-                min_n_to_visit = n_to_visit;
-            }
-        }
+        // int min_n_to_visit = N_FLOORS;
+        // for (int cur_cabin_id = 0; cur_cabin_id < N_CABINS; ++cur_cabin_id) {
+        //     int n_to_visit = 0;
+        //     for (int i = 0; i <= N_FLOORS; ++i)
+        //         if (to_visit[cur_cabin_id][i] != NOT_TO_VISIT)
+        //             ++n_to_visit;
+
+        //     if (n_to_visit < min_n_to_visit) {
+        //         desided_cabin_id = (cabin_id_t)cur_cabin_id;
+        //         min_n_to_visit = n_to_visit;
+        //     }
+        // }
     }
 
-    to_visit[desided_cabin_id][floor_n - 1] = true;
-    qInfo("Решено было отправить на этот вызов кабину №%d.", desided_cabin_id + 1);
-
-    if (direction == UP)
+    if (direction == UP) {
+        to_visit[desided_cabin_id][TO_VISIT_WHILE_UP][floor_n - 1] = true;
         emit floor_buttons[UP_ID][floor_n - 1]->activateSignal();
-    else
+    } else {
+        to_visit[desided_cabin_id][TO_VISIT_WHILE_DOWN][floor_n - 1] = true;
         emit floor_buttons[DOWN_ID][floor_n - 1]->activateSignal();
+    }
 }
 
 void Controller::new_cabin_destination(int floor_n, cabin_id_t cabin_id)
 {
+    // Если такой вызов кабине уже поручен, выходим.
+    if (to_visit[cabin_id][TO_VISIT_ON_ANY][floor_n - 1])
+        return;
+
     _state = MANAGING_NEW_CABIN_DEST;
-    to_visit[cabin_id][floor_n - 1] = true;
+    to_visit[cabin_id][TO_VISIT_ON_ANY][floor_n - 1] = true;
 
     emit elevator_buttons[cabin_id][floor_n - 1]->activateSignal();
 }
@@ -138,27 +155,110 @@ void Controller::reach_floor(int floor_n, cabin_id_t cabin_id)
         return;
 
     _state = REACH_FLOOR;
-    to_visit[cabin_id][floor_n - 1] = false;
 
+    to_visit[cabin_id][TO_VISIT_ON_ANY][floor_n - 1] = false;
     emit elevator_buttons[cabin_id][floor_n - 1]->deactivateSignal();
 
-    if (cur_direction[cabin_id] == UP)
+    if (cur_direction[cabin_id] == UP) {
+        to_visit[cabin_id][TO_VISIT_WHILE_UP][floor_n - 1] = false;
         emit floor_buttons[UP_ID][floor_n - 1]->deactivateSignal();
-    else
+    } else {
+        to_visit[cabin_id][TO_VISIT_WHILE_DOWN][floor_n - 1] = false;
         emit floor_buttons[DOWN_ID][floor_n - 1]->deactivateSignal();
+    }
+
+    emit buttonsDeactivatedSignal();
 }
 
 direction_t Controller::get_next_direction(cabin_id_t cabin_id)
 {
-    if (cur_direction[cabin_id] == STAND)
-        return STAND;
+    if (cur_direction[cabin_id] == STAND) {
+        /*
+         * Если лифт стоит, то едем к тому целевому этажу, который ближе всего.
+         */
+        int dst_visit_point = 0;
+        int min_possible_distance = N_FLOORS;
+
+        for (int floor_i = 0; floor_i < N_FLOORS; ++floor_i) {
+            if (to_visit[cabin_id][TO_VISIT_ON_ANY][floor_i] ||
+                to_visit[cabin_id][TO_VISIT_WHILE_UP][floor_i] ||
+                to_visit[cabin_id][TO_VISIT_WHILE_DOWN][floor_i]) {
+                int difference = cur_floor_i[cabin_id] - floor_i;
+                if (min_possible_distance > difference && difference) {
+                    min_possible_distance = difference;
+                    dst_visit_point = floor_i;
+                }
+            }
+        }
+
+        if (min_possible_distance == N_FLOORS)
+            return STAND;
+
+        if (dst_visit_point  > cur_floor_i[cabin_id])
+            return UP;
+        else
+            return DOWN;
+    }
 
     for (int floor_i = cur_floor_i[cabin_id] + cur_direction[cabin_id]; 0 <= floor_i && floor_i < N_FLOORS;
          floor_i += cur_direction[cabin_id]) {
-        if (to_visit[cabin_id][floor_i])
-            return cur_direction[cabin_id];
+        /*
+         * Ищем желающих поехать по ходу движения кабины, к которым можно заехать в текущем её положении.
+         */
+        if (cur_direction[cabin_id] == UP) {
+            if (to_visit[cabin_id][TO_VISIT_ON_ANY][floor_i] ||
+                to_visit[cabin_id][TO_VISIT_WHILE_UP][floor_i])
+                return UP;
+        } else {
+            if (to_visit[cabin_id][TO_VISIT_ON_ANY][floor_i] ||
+                to_visit[cabin_id][TO_VISIT_WHILE_DOWN][floor_i])
+                return DOWN;
+        }
     }
 
+    /*
+     * По ходу движения кабины не нашлось желающих ехать в том же направлении.
+     * Не меняем направление кабины, смотрим, есть ли те, кому надо в противоположном направлении.
+     * Выбираем самого далёкого из них, чтобы остальных забрать уже по ходу движения.
+     */
+    if (cur_direction[cabin_id] == UP) {
+        for (int floor_i = N_FLOORS - 1; floor_i >= 0; --floor_i) {
+            if (to_visit[cabin_id][TO_VISIT_WHILE_DOWN][floor_i]) {
+                if (floor_i > cur_floor_i[cabin_id])
+                    return UP;
+                else if (floor_i < cur_floor_i[cabin_id])
+                    return DOWN;
+                /*
+                 * Если найденный этаж равен этажу текущему, пропускаем, потому что мы только что на нем остановились?
+                 */
+            }
+        }
+    }
+
+    if (cur_direction[cabin_id] == DOWN) {
+        for (int floor_i = 0; floor_i < N_FLOORS; ++floor_i) {
+            if (to_visit[cabin_id][TO_VISIT_WHILE_UP][floor_i]) {
+                if (floor_i > cur_floor_i[cabin_id])
+                    return UP;
+                else if (floor_i < cur_floor_i[cabin_id])
+                    return DOWN;
+                /*
+                 * Если найденный этаж равен этажу текущему, пропускаем, потому что мы только что на нем остановились?
+                 */
+            }
+        }
+    }
+
+    // Больше целевых этажей нет, в приоритет ставим направление по ходу движения
+    if ((to_visit[cabin_id][TO_VISIT_WHILE_UP][cur_floor_i[cabin_id]] ||
+         to_visit[cabin_id][TO_VISIT_ON_ANY][cur_floor_i[cabin_id]]) && cur_direction[cabin_id] == UP)
+        return UP;
+
+    if ((to_visit[cabin_id][TO_VISIT_WHILE_DOWN][cur_floor_i[cabin_id]] ||
+         to_visit[cabin_id][TO_VISIT_ON_ANY][cur_floor_i[cabin_id]]) && cur_direction[cabin_id] == DOWN)
+        return DOWN;
+
+    // Можно поехать только против хода движения
     return cur_direction[cabin_id] == UP ? DOWN : UP;
 }
 
@@ -167,10 +267,15 @@ int Controller::get_next_visit_point(cabin_id_t cabin_id)
     int dst_visit_point = FLOOR_NOT_FOUND;
 
     if (cur_direction[cabin_id] == STAND) {
+        /*
+         * Если лифт стоит, то едем к тому целевому этажу, который ближе всего.
+         */
         int min_possible_distance = N_FLOORS;
 
         for (int floor_i = 0; floor_i < N_FLOORS; ++floor_i) {
-            if (to_visit[cabin_id][floor_i]) {
+            if (to_visit[cabin_id][TO_VISIT_ON_ANY][floor_i] ||
+                to_visit[cabin_id][TO_VISIT_WHILE_UP][floor_i] ||
+                to_visit[cabin_id][TO_VISIT_WHILE_DOWN][floor_i]) {
                 int difference = cur_floor_i[cabin_id] - floor_i;
                 if (min_possible_distance > difference) {
                     min_possible_distance = difference;
@@ -182,16 +287,37 @@ int Controller::get_next_visit_point(cabin_id_t cabin_id)
     else {
         for (int floor_i = cur_floor_i[cabin_id]; 0 <= floor_i && floor_i < N_FLOORS;
              floor_i += cur_direction[cabin_id]) {
-
-            if (to_visit[cabin_id][floor_i])
-                return floor_i;
+            /*
+             * Ищем желающих поехать по ходу движения кабины, к которым можно заехать в текущем её положении.
+             */
+            if (cur_direction[cabin_id] == UP) {
+                if (to_visit[cabin_id][TO_VISIT_ON_ANY][floor_i] ||
+                    to_visit[cabin_id][TO_VISIT_WHILE_UP][floor_i])
+                    return floor_i;
+            } else {
+                if (to_visit[cabin_id][TO_VISIT_ON_ANY][floor_i] ||
+                    to_visit[cabin_id][TO_VISIT_WHILE_DOWN][floor_i])
+                    return floor_i;
+            }
         }
 
-        for (int floor_i = cur_floor_i[cabin_id] - cur_direction[cabin_id]; 0 <= floor_i && floor_i < N_FLOORS;
-             floor_i -= cur_direction[cabin_id]) {
+        /*
+         * По ходу движения кабины не нашлось желающих ехать в том же направлении.
+         * Не меняем направление кабины, смотрим, есть ли те, кому надо в противоположном направлении.
+         * Выбираем самого далёкого из них, чтобы остальных забрать уже по ходу движения.
+         */
+        if (cur_direction[cabin_id] == UP) {
+            for (int floor_i = N_FLOORS - 1; floor_i >= 0; --floor_i) {
+                if (to_visit[cabin_id][TO_VISIT_WHILE_DOWN][floor_i])
+                    return floor_i;
+            }
+        }
 
-            if (to_visit[cabin_id][floor_i])
-                return floor_i;
+        if (cur_direction[cabin_id] == DOWN) {
+            for (int floor_i = 0; floor_i < N_FLOORS; ++floor_i) {
+                if (to_visit[cabin_id][TO_VISIT_WHILE_UP][floor_i])
+                    return floor_i;
+            }
         }
     }
 
@@ -207,12 +333,12 @@ void Controller::manage_cabin()
         int dst_floor = get_next_visit_point((cabin_id_t)cabin_id);
 
         // NOTE(Talkasi): For more convinient testing
-        // if (dst_floor != FLOOR_NOT_FOUND)
-        //     qInfo("-------------------------------------------------->" \
-        //           " Текущая цель лифта №%d — этаж №%d.", cabin_id + 1, dst_floor + 1);
-        // else
-        //     qInfo("-------------------------------------------------->" \
-        //           " Целей лифта №%d нет.", cabin_id + 1);
+        if (dst_floor != FLOOR_NOT_FOUND)
+            qInfo("-------------------------------------------------->" \
+                  " Текущая цель лифта №%d — этаж №%d.", cabin_id + 1, dst_floor + 1);
+        else
+            qInfo("-------------------------------------------------->" \
+                  " Целей лифта №%d нет.", cabin_id + 1);
 
         if (dst_floor == FLOOR_NOT_FOUND) {
             cur_direction[cabin_id] = STAND;
@@ -236,7 +362,7 @@ void Controller::manage_cabin()
     }
 
     if (cabins_free == N_CABINS)
-        emit free_controller_signal();
+        emit freeControllerSignal();
 }
 
 void Controller::free_controller()
@@ -244,8 +370,9 @@ void Controller::free_controller()
     if (_state == FREE)
         return;
 
+    qInfo("[!] Контроллер находится в состоянии покоя.");
     _state = FREE;
-    emit controller_freed();
+    emit controllerFreedSignal();
 }
 
 // NOTE(Talkasi): For more convinient testing
@@ -254,7 +381,7 @@ void Controller::floor_button_change(int floor_n, direction_id_t direction_id, b
     emit controller_floor_button_change(floor_n, direction_id, is_active);
 }
 
-       // NOTE(Talkasi): For more convinient testing
+// NOTE(Talkasi): For more convinient testing
 void Controller::cabin_button_change(int floor_n, cabin_id_t cabin_id, bool is_active)
 {
     emit controller_cabin_button_change(floor_n, cabin_id, is_active);

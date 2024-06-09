@@ -14,7 +14,7 @@ void ElevatorButton::activateSlot()
         return;
 
     this->_state = ACTIVE;
-    qInfo("[!] Пассажир в кабине лифта №%d нажал на кнопку этажа №%d.", _cabin_id + 1, _buttonFloorNumber);
+    qInfo(CYAN_TEXT_COLOR "[!] В кабине лифта №%d была нажата кнопка этажа №%d." NO_TEXT_COLOR, _cabin_id + 1, _buttonFloorNumber);
     emit activatedSignal();
 }
 
@@ -24,6 +24,6 @@ void ElevatorButton::deactivateSlot()
         return;
 
     this->_state = INACTIVE;
-    qInfo("[!] В кабине лифта №%d кнопка этажа №%d деактивирована.", _cabin_id + 1, _buttonFloorNumber);
+    qInfo(CYAN_TEXT_COLOR "[!] В кабине лифта №%d кнопка этажа №%d деактивирована." NO_TEXT_COLOR, _cabin_id + 1, _buttonFloorNumber);
     emit deactivatedSignal();
 }

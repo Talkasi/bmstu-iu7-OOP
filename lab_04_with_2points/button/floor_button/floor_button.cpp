@@ -16,9 +16,9 @@ void FloorButton::activateSlot()
 
     this->_state = ACTIVE;
     if (_direction == UP)
-        qInfo("[!] Ожидающий лифта на этаже №%d хочет поехать наверх.", _buttonFloorNumber);
+        qInfo(BLUE_TEXT_COLOR "[!] На этаже №%d была нажата кнопка вызова НАВЕРХ." NO_TEXT_COLOR, _buttonFloorNumber);
     else
-        qInfo("[!] Ожидающий лифта на этаже №%d хочет поехать вниз.", _buttonFloorNumber);
+        qInfo(BLUE_TEXT_COLOR "[!] На этаже №%d была нажата кнопка вызова ВНИЗ." NO_TEXT_COLOR, _buttonFloorNumber);
 
     emit activatedSignal();
 }
@@ -30,9 +30,9 @@ void FloorButton::deactivateSlot()
 
     this->_state = INACTIVE;
     if (_direction == UP)
-        qInfo("[!] На этаже №%d кнопка вызова лифта наверх деактивирована.", _buttonFloorNumber);
+        qInfo(BLUE_TEXT_COLOR "[!] На этаже №%d кнопка вызова лифта наверх деактивирована." NO_TEXT_COLOR, _buttonFloorNumber);
     else
-        qInfo("[!] На этаже №%d кнопка вызова лифта вниз деактивирована.", _buttonFloorNumber);
+        qInfo(BLUE_TEXT_COLOR "[!] На этаже №%d кнопка вызова лифта вниз деактивирована." NO_TEXT_COLOR, _buttonFloorNumber);
 
     emit deactivatedSignal();
 }
