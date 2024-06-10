@@ -48,10 +48,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
         line->setFrameShadow(QFrame::Sunken);
         floor_grid->addWidget(line, 2, 0, 1, 2);
 
-        QObject::connect(floor_buttons[UP_ID][i - 1].get(), &QPushButton::clicked, [=]() { my_elevator_system.manage_floor_call(i, UP); });
+        QObject::connect(floor_buttons[UP_ID][i - 1].get(), &QPushButton::clicked,
+                         [=]() { my_elevator_system.manage_floor_call_slot(i, UP); });
 
         QObject::connect(floor_buttons[DOWN_ID][i - 1].get(), &QPushButton::clicked,
-                         [=]() { my_elevator_system.manage_floor_call(i, DOWN); });
+                         [=]() { my_elevator_system.manage_floor_call_slot(i, DOWN); });
 
         gridLayout->addLayout(floor_grid, N_FLOORS - i + 1, 0, 1, 1);
     }
@@ -72,7 +73,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     floor1_grid->addWidget(floor_buttons[UP_ID][0].get(), 0, 1, 1, 1);
     gridLayout->addLayout(floor1_grid, N_FLOORS, 0, 1, 1);
 
-    QObject::connect(floor_buttons[UP_ID][0].get(), &QPushButton::clicked, [=]() { my_elevator_system.manage_floor_call(1, UP); });
+    QObject::connect(floor_buttons[UP_ID][0].get(), &QPushButton::clicked, [=]() { my_elevator_system.manage_floor_call_slot(1, UP); });
 
     // Last floor
     QGridLayout *floorN_grid = new QGridLayout();
@@ -90,7 +91,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     floorN_grid->addWidget(floor_buttons[DOWN_ID][N_FLOORS - 1].get(), 0, 1, 1, 1);
 
     QObject::connect(floor_buttons[DOWN_ID][N_FLOORS - 1].get(), &QPushButton::clicked,
-                     [=]() { my_elevator_system.manage_floor_call(N_FLOORS, DOWN); });
+                     [=]() { my_elevator_system.manage_floor_call_slot(N_FLOORS, DOWN); });
 
     QFrame *lineN = new QFrame(gridLayoutWidget);
     lineN->setObjectName("line_" + QString::number(N_FLOORS));
@@ -99,10 +100,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     floorN_grid->addWidget(lineN, 1, 0, 1, 2);
     gridLayout->addLayout(floorN_grid, 1, 0, 1, 1);
 
-    QObject::connect(&my_elevator_system, SIGNAL(change_floor_button_signal(int, direction_id_t, bool)), this,
+    QObject::connect(&my_elevator_system, SIGNAL(floorButtonSystemMediatorSignal(int, direction_id_t, bool)), this,
                      SLOT(change_floor_button_style(int, direction_id_t, bool)));
 
-    QObject::connect(&my_elevator_system, SIGNAL(change_floor_button_signal(int, direction_id_t, bool)), this,
+    QObject::connect(&my_elevator_system, SIGNAL(floorButtonSystemMediatorSignal(int, direction_id_t, bool)), this,
                      SLOT(change_floor_button_style(int, direction_id_t, bool)));
 
     QSpacerItem *horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Policy::Fixed, QSizePolicy::Policy::Minimum);
@@ -132,9 +133,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
             gridLayout->addWidget(elevator_buttons[cabin_id][i - 1].get(), N_FLOORS - i + 1, 2 + cabin_id, 1, 1);
 
             QObject::connect(elevator_buttons[cabin_id][i - 1].get(), &QPushButton::clicked,
-                             [=]() { my_elevator_system.manage_cabin_call(i, (cabin_id_t)cabin_id); });
+                             [=]() { my_elevator_system.manage_cabin_call_slot(i, (cabin_id_t)cabin_id); });
 
-            QObject::connect(&my_elevator_system, SIGNAL(change_cabin_button_signal(int, cabin_id_t, bool)), this,
+            QObject::connect(&my_elevator_system, SIGNAL(cabinButtonSystemMediatorSignal(int, cabin_id_t, bool)), this,
                              SLOT(change_cabin_button_style(int, cabin_id_t, bool)));
         }
     }

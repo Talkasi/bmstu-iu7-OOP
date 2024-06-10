@@ -20,8 +20,8 @@ public:
 
 signals:
     // NOTE(Talkasi): For more convinient testing
-    void client_call_from_cabin(int floor_n, cabin_id_t cabin_id);
-    void client_call_from_floor(int floor_n, direction_t direction);
+    void clientCallFromCabinSignal(int floor_n, cabin_id_t cabin_id);
+    void clientCallFromFloorSignal(int floor_n, direction_t direction);
 
 private slots:
     // NOTE(Talkasi): For more convinient testing

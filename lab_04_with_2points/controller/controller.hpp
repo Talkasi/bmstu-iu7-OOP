@@ -19,24 +19,22 @@ signals:
     void freeCabinSignal(cabin_id_t cabin_id);
 
     void reachFloorSignal();
-    void controllerFreedSignal();
 
+    void controllerFreedSignal();
     void freeControllerSignal();
+
     void buttonsDeactivatedSignal(cabin_id_t cabin_id);
 
-    void manageCabinSignal(cabin_id_t cabin_id);
-
     // NOTE(Talkasi): For more convinient testing
-    void controller_cabin_button_change(int floor_n, cabin_id_t cabin_id, bool is_active);
-    void controller_floor_button_change(int floor_n, direction_id_t direction_id, bool is_active);
+    void cabinButtonControllerMediatorSignal(int floor_n, cabin_id_t cabin_id, bool is_active);
+    void floorButtonControllerMediatorSignal(int floor_n, direction_id_t direction_id, bool is_active);
 
 public slots:
-    void free_controller();
-    void new_floor_destination(int floor_n, direction_t direction);
-    void new_cabin_destination(int floor_n, cabin_id_t cabin_id);
-    void reach_floor(int floor_n, cabin_id_t cabin_id);
-    void manage_cabins();
-    void manage_cabin(cabin_id_t cabin_id);
+    void free_controller_slot();
+    void new_floor_destination_slot(int floor_n, direction_t direction);
+    void new_cabin_destination_slot(int floor_n, cabin_id_t cabin_id);
+    void reach_floor_slot(int floor_n, cabin_id_t cabin_id);
+    void manage_cabin_slot(cabin_id_t cabin_id);
 
     // NOTE(Talkasi): For more convinient testing
     void floor_button_change(int floor_n, direction_id_t direction_id, bool is_active);
@@ -46,6 +44,7 @@ private:
     bool all_cabins_are_free();
     int get_next_visit_point(cabin_id_t cabin_id);
     direction_t get_next_direction(cabin_id_t cabin_id);
+    cabin_id_t get_desided_cabin_id(int floor_n, direction_t direction);
 
     enum controller_state_t
     {
@@ -53,7 +52,6 @@ private:
         MANAGING_NEW_FLOOR_DEST,
         MANAGING_NEW_CABIN_DEST,
         REACH_FLOOR,
-        MANAGING_CABINS,
         MANAGING_CABIN,
     };
 
